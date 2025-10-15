@@ -273,6 +273,13 @@ header.site-header{
   color: #666;
   word-break: break-word;
 }
+
+.message-time {
+  font-size: 0.7rem;
+  color: #666;
+  margin-top: 5px;
+  text-align: right;
+}
 /* ---- KẾT THÚC KHỐI CSS ---- */
 
     .chat-input-area {
@@ -716,6 +723,9 @@ header.site-header{
       currentUser = JSON.parse(localStorage.getItem('user')) || { username: 'Khách' };
       const userName = currentUser.username || 'Khách';
 
+      // Thêm tin nhắn chào mừng nếu chưa có tin nhắn nào
+      addWelcomeMessage();
+
       // Tham chiếu đến collection messages
       const messagesRef = db.collection('messages')
         .orderBy('createdAt', 'asc')
@@ -724,7 +734,11 @@ header.site-header{
       // Lắng nghe tin nhắn real-time
       unsubscribeMessages = messagesRef.onSnapshot((snapshot) => {
         const messagesContainer = document.getElementById('tinytags-messages');
-        messagesContainer.innerHTML = '';
+        
+        // Chỉ xóa tin nhắn nếu có tin nhắn mới từ Firebase
+        if (!snapshot.empty) {
+          messagesContainer.innerHTML = '';
+        }
 
         snapshot.forEach((doc) => {
           const message = doc.data();
@@ -734,36 +748,70 @@ header.site-header{
         // Cuộn xuống tin nhắn mới nhất
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
         
-  // Cập nhật trạng thái Firebase
-function updateFirebaseStatus(status, message) {
-  const statusEl = document.getElementById('firebaseStatus');
-  statusEl.className = `firebase-status status-${status}`;
-  statusEl.innerHTML = message;
-  
-  // Tự động ẩn thông báo sau 3 giây nếu kết nối thành công
-  if (status === 'connected') {
-    setTimeout(() => {
-      statusEl.style.display = 'none';
-    }, 3000); // Ẩn sau 3 giây
-  } else {
-    statusEl.style.display = 'block'; // Hiện lại nếu có lỗi
+        // Cập nhật trạng thái Firebase
+        updateFirebaseStatus('connected', '<i class="fas fa-check-circle"></i> Đã kết nối Firebase');
+      }, (error) => {
+        console.error('Lỗi kết nối Firebase:', error);
+        updateFirebaseStatus('disconnected', '<i class="fas fa-exclamation-circle"></i> Lỗi kết nối Firebase');
+      });
+
+    } catch (error) {
+      console.error('Lỗi khởi tạo Firebase:', error);
+      updateFirebaseStatus('disconnected', '<i class="fas fa-exclamation-circle"></i> Lỗi khởi tạo Firebase');
+    }
   }
-}
+
+  // Thêm tin nhắn chào mừng
+  function addWelcomeMessage() {
+    const messagesContainer = document.getElementById('tinytags-messages');
+    const welcomeMessage = {
+      text: "Cảm ơn bạn đã quan tâm đến Tiny Tags. Hãy để lại tin nhắn, chúng tôi sẽ hỗ trợ bạn và cần tư vấn gì...",
+      sender: "admin",
+      type: "text",
+      createdAt: new Date()
+    };
+    
+    // Kiểm tra xem đã có tin nhắn chào mừng chưa
+    const existingWelcome = messagesContainer.querySelector('.welcome-message');
+    if (!existingWelcome) {
+      displayMessage(welcomeMessage, true);
+    }
+  }
+
+  // Cập nhật trạng thái Firebase
+  function updateFirebaseStatus(status, message) {
+    const statusEl = document.getElementById('firebaseStatus');
+    statusEl.className = `firebase-status status-${status}`;
+    statusEl.innerHTML = message;
+    
+    // Tự động ẩn thông báo sau 3 giây nếu kết nối thành công
+    if (status === 'connected') {
+      setTimeout(() => {
+        statusEl.style.display = 'none';
+      }, 3000); // Ẩn sau 3 giây
+    } else {
+      statusEl.style.display = 'block'; // Hiện lại nếu có lỗi
+    }
+  }
 
   // Hiển thị tin nhắn
-  function displayMessage(message) {
+  function displayMessage(message, isWelcome = false) {
     const messagesContainer = document.getElementById('tinytags-messages');
     
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${message.sender === 'admin' ? 'shop-message' : 'user-message'}`;
     
+    if (isWelcome) {
+      messageDiv.classList.add('welcome-message');
+    }
+    
     if (message.type === 'image') {
       // Tin nhắn hình ảnh
+      messageDiv.classList.add('image-message');
+      
       const img = document.createElement('img');
       img.src = message.imageData;
       img.alt = 'Hình ảnh đã gửi';
-      img.style.maxWidth = '200px';
-      img.style.borderRadius = '8px';
       
       messageDiv.appendChild(img);
       
@@ -781,9 +829,6 @@ function updateFirebaseStatus(status, message) {
     // Thêm thời gian
     const timeDiv = document.createElement('div');
     timeDiv.className = 'message-time';
-    timeDiv.style.fontSize = '0.7rem';
-    timeDiv.style.color = '#666';
-    timeDiv.style.marginTop = '5px';
     timeDiv.textContent = formatTime(message.createdAt?.toDate() || new Date());
     
     messageDiv.appendChild(timeDiv);
@@ -821,13 +866,6 @@ function updateFirebaseStatus(status, message) {
       console.error('Lỗi gửi hình ảnh:', error);
       return false;
     }
-  }
-
-  // Cập nhật trạng thái Firebase
-  function updateFirebaseStatus(status, message) {
-    const statusEl = document.getElementById('firebaseStatus');
-    statusEl.className = `firebase-status status-${status}`;
-    statusEl.innerHTML = message;
   }
 
   // ========== CHAT FUNCTIONS ==========
@@ -960,6 +998,9 @@ function updateFirebaseStatus(status, message) {
           
           await batch.commit();
           alert('Đã xóa lịch sử trò chuyện');
+          
+          // Thêm lại tin nhắn chào mừng
+          addWelcomeMessage();
         } catch (error) {
           console.error('Lỗi xóa tin nhắn:', error);
           alert('❌ Lỗi xóa lịch sử! Vui lòng thử lại.');
@@ -1014,7 +1055,7 @@ function updateFirebaseStatus(status, message) {
         });
         return batch.commit();
       }).then(() => {
-        console.log('✅ Đã xóa tất cả tin nhắn');
+        console.log('✅ Đã xóa tất cả tin nh nhắn');
         location.reload();
       });
     }
@@ -1069,105 +1110,6 @@ function updateFirebaseStatus(status, message) {
   window.addEventListener('storage', function(e){ 
     if (e.key === 'user') updateUserSection(); 
   });
-</script>
-
-
-<!-- Firebase helpers -->
-<script type="module">
-  // Firebase app already expected in js/firebase-config.js (exports: db, auth, storage)
-  import { db, auth, storage } from "./js/firebase-config.js";
-  import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, updateDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-  import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
-  // helper functions used by injected code
-  window._firebase_helpers = {
-    addOrder: async (order) => {
-      return await addDoc(collection(db, "orders"), { ...order, status: "pending", createdAt: serverTimestamp() });
-    },
-    sendChatMessage: async (userId, message) => {
-      // message: { text, sender, imageUrl? }
-      const chatCol = collection(db, "chats", userId, "messages");
-      return await addDoc(chatCol, { ...message, createdAt: serverTimestamp() });
-    },
-    uploadImageAndGetUrl: async (file, pathPrefix="chat_images") => {
-      const p = `${pathPrefix}/${Date.now()}_${file.name}`;
-      const sRef = storageRef(storage, p);
-      const snap = await uploadBytes(sRef, file);
-      const url = await getDownloadURL(snap.ref);
-      return url;
-    },
-    listenOrders: (onUpdate) => {
-      const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
-      return onSnapshot(q, onUpdate);
-    },
-    listenUserChatsList: (onUpdate) => {
-      // get all chats (root 'chats' collection) -> list userIds with latest message
-      const chatsRoot = collection(db, "chats");
-      // Note: Firestore doesn't allow easy list of subcollections; admin will fetch by listing chat documents (we will store a 'meta' doc per user in 'chats_meta')
-      const qmeta = query(collection(db, "chats_meta"), orderBy("lastUpdated", "desc"));
-      return onSnapshot(qmeta, onUpdate);
-    },
-    listenChatMessages: (userId, onUpdate) => {
-      const q = query(collection(db, "chats", userId, "messages"), orderBy("createdAt", "asc"));
-      return onSnapshot(q, onUpdate);
-    }
-  };
-</script>
-<script type="module">
-import { auth } from './js/firebase-config.js';
-// Uses global window._firebase_helpers from firebase snippet
-// Ensure user is logged in before allowing chat
-auth.onAuthStateChanged(user => {
-  if(!user){
-    alert('Bạn cần đăng nhập để chat.');
-    window.location.href = 'login.html';
-    return;
-  }
-  const userId = user.uid;
-  // UI elements
-  const chatList = document.getElementById('messages') || document.getElementById('chat-messages') || document.querySelector('.chat-messages');
-  const chatForm = document.getElementById('chatForm') || document.querySelector('#chat-form') || null;
-  const fileInput = document.querySelector('#chatImage') || document.querySelector('input[type=file]');
-  // listen messages for this user room
-  let unsubscribe = window._firebase_helpers.listenChatMessages(userId, (snapshot) => {
-    if(!chatList) return;
-    chatList.innerHTML = '';
-    snapshot.forEach(docSnap => {
-      const m = docSnap.data();
-      const div = document.createElement('div');
-      div.className = m.sender === 'admin' ? 'msg-admin' : 'msg-user';
-      let inner = '';
-      if(m.imageUrl){
-        inner += `<div><img src="${m.imageUrl}" alt="img" style="max-width:200px;"/></div>`;
-      }
-      inner += `<div>${m.text ? m.text : ''}</div><small>${m.sender}</small>`;
-      div.innerHTML = inner;
-      chatList.appendChild(div);
-    });
-    chatList.scrollTop = chatList.scrollHeight;
-  });
-
-  if(chatForm){
-    chatForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const text = chatForm.querySelector('input[name=message]')?.value || chatForm.querySelector('textarea[name=message]')?.value || '';
-      let imageUrl = null;
-      if(fileInput && fileInput.files && fileInput.files[0]){
-        try {
-          imageUrl = await window._firebase_helpers.uploadImageAndGetUrl(fileInput.files[0]);
-        } catch(err){
-          console.error('Upload lỗi', err);
-          alert('Không thể upload ảnh.');
-        }
-      }
-      if(!text && !imageUrl) return;
-      await window._firebase_helpers.sendChatMessage(userId, { text, sender: 'user', imageUrl });
-      // clear form
-      if(chatForm.querySelector('input[name=message]')) chatForm.querySelector('input[name=message]').value = '';
-      if(chatForm.querySelector('textarea[name=message]')) chatForm.querySelector('textarea[name=message]').value = '';
-      if(fileInput) fileInput.value = '';
-    });
-  }
-});
 </script>
 </body>
 </html>
