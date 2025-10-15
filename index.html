@@ -97,63 +97,44 @@
 
     /* ========== HERO BANNER ========== */
     .hero-banner {
-      position: relative;
-      height: 500px;
-      overflow: hidden;
+      background: linear-gradient(45deg, #8e3232, #37062e);
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
       margin-bottom: 40px;
-    }
-    
-    .hero-slide {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
-    
-    .hero-slide.active {
-      opacity: 1;
-    }
-    
-    .hero-slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      position: relative;
+      overflow: hidden;
     }
     
     .hero-content {
-      position: absolute;
-      top: 50%;
-      left: 10%;
-      transform: translateY(-50%);
-      color: white;
-      max-width: 500px;
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
       z-index: 2;
     }
     
     .hero-title {
-      font-size: 3rem;
+      font-size: 3.5rem;
       font-weight: 800;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
     
     .hero-subtitle {
-      font-size: 1.2rem;
-      margin-bottom: 24px;
+      font-size: 1.3rem;
+      margin-bottom: 30px;
       opacity: 0.9;
+      line-height: 1.6;
     }
     
     .hero-btn {
       background: var(--accent);
       color: white;
       border: none;
-      padding: 14px 28px;
+      padding: 16px 32px;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 1.1rem;
       cursor: pointer;
       transition: all 0.3s;
       box-shadow: 0 4px 15px rgba(254, 44, 85, 0.3);
@@ -163,30 +144,6 @@
       background: #e0264d;
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(254, 44, 85, 0.4);
-    }
-    
-    .hero-dots {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 10px;
-      z-index: 2;
-    }
-    
-    .hero-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.5);
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .hero-dot.active {
-      background: white;
-      transform: scale(1.2);
     }
 
     /* ========== CATEGORIES ========== */
@@ -521,16 +478,11 @@
       }
       
       .hero-banner {
-        height: 400px;
+        padding: 60px 20px;
       }
       
       .hero-title {
         font-size: 2.2rem;
-      }
-      
-      .hero-content {
-        left: 5%;
-        right: 5%;
       }
       
       .products-grid {
@@ -582,12 +534,14 @@
     </div>
   </header>
 
-  <!-- Hero Banner
+  <!-- Hero Banner Đơn giản -->
   <section class="hero-banner">
-    <div class="hero-slide active">
-      <img src="Hình/BANNER/banner 1.jpg" alt="Phụ kiện độc đáo" onerror="this.src='https://via.placeholder.com/1600x500?text=Phụ+Kiện+Độc+Đáo'">
+    <div class="hero-content">
+      <h1 class="hero-title">Tiny Tags - Phụ Kiện Handmade</h1>
+      <p class="hero-subtitle">Khám phá bộ sưu tập móc khóa handmade đáng yêu, độc đáo và chất lượng. Mỗi sản phẩm đều được làm thủ công với tình yêu và sự tỉ mỉ.</p>
+      <button class="hero-btn" onclick="window.location.href='store.html'">Khám phá ngay</button>
     </div>
-  </section> -->
+  </section>
 
   <!-- Categories -->
   <section class="categories">
@@ -973,45 +927,14 @@
       });
     }
 
-    // Hero Slider
-    function initHeroSlider() {
-      let currentSlide = 0;
-      const slides = document.querySelectorAll('.hero-slide');
-      const dots = document.querySelectorAll('.hero-dot');
-      const totalSlides = slides.length;
-      
-      function showSlide(index) {
-        // Ẩn tất cả slides
-        slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
-        
-        // Hiển thị slide được chọn
-        slides[index].classList.add('active');
-        dots[index].classList.add('active');
-        
-        currentSlide = index;
-      }
-      
-      // Xử lý click vào dots
-      dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-          showSlide(index);
-        });
-      });
-      
-      // Tự động chuyển slide
-      setInterval(() => {
-        let nextSlide = (currentSlide + 1) % totalSlides;
-        showSlide(nextSlide);
-      }, 5000);
-    }
+    // ĐÃ XÓA HOÀN TOÀN SLIDER FUNCTION
 
     document.addEventListener("DOMContentLoaded", () => {
       updateUserSection();
       loadFeaturedProducts();
       updateCartCount();
       initHeaderSearch();
-      initHeroSlider();
+      // ĐÃ XÓA initHeroSlider() - không gọi hàm slider nữa
     });
 
     window.addEventListener("storage", (e) => { 
@@ -1019,19 +942,6 @@
       if (e.key === "cart") updateCartCount();
     });
   </script>
-  <script type="module" src="./firebaseConfig.js"></script>
-  <!-- Trong admin.html, index.html, etc -->
-<script type="module">
-    import { db, ref, set, get } from './firebaseConfig.js';
-    
-    // Sử dụng các hàm Firebase ở đây
-    function writeTestData() {
-        set(ref(db, "test/hello"), {
-            message: "Firebase connected successfully!",
-            time: new Date().toISOString()
-        });
-    }
-</script>
-  <script src="./firebaseConfig.js"></script>
+
 </body>
 </html>
