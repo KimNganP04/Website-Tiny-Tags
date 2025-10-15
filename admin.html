@@ -758,6 +758,59 @@
             to { opacity: 0; visibility: hidden; }
         }
 
+        /* Thông báo đơn hàng mới */
+        .new-order-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #fe2c55, #ff6b9d);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(254, 44, 85, 0.4);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.5s ease;
+            max-width: 350px;
+            cursor: pointer;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .new-order-badge {
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
         @media (max-width: 1024px) {
             .dashboard {
                 grid-template-columns: 1fr;
@@ -816,6 +869,9 @@
     <div class="firebase-status status-connecting" id="firebaseStatus">
         <i class="fas fa-sync fa-spin"></i> Đang kết nối Firebase...
     </div>
+
+    <!-- Container cho thông báo đơn hàng mới -->
+    <div id="notificationContainer"></div>
 
     <div class="admin-container">
         <div class="admin-header">
@@ -941,13 +997,17 @@
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script>
         // ========== FIREBASE CONFIG ==========
+        // THAY THẾ BẰNG CẤU HÌNH FIREBASE CỦA BẠN
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
         const firebaseConfig = {
-            apiKey: "AIzaSyC_your-api-key-here",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef123456"
+          apiKey: "AIzaSyBiXnYvACDsrVFok3Qoqa28hoCaEUywkkU",
+          authDomain: "tiny-tags.firebaseapp.com",
+          databaseURL: "https://tiny-tags-default-rtdb.firebaseio.com",
+          projectId: "tiny-tags",
+          storageBucket: "tiny-tags.firebasestorage.app",
+          messagingSenderId: "1071908349765",
+          appId: "1:1071908349765:web:7890592f4e320b8aa5402c",
+          measurementId: "G-MYGSXPKXFK"
         };
 
         // Initialize Firebase
@@ -959,6 +1019,8 @@
         let currentChatUser = null;
         let ordersUnsubscribe = null;
         let messagesUnsubscribe = null;
+        let newOrdersCount = 0;
+        let isFirstLoad = true;
 
         // ========== FIREBASE REAL-TIME LISTENERS ==========
 
@@ -970,22 +1032,55 @@
         function initializeFirebaseListeners() {
             updateFirebaseStatus('connecting', '🟡 Đang kết nối Firebase...');
 
-            // Lắng nghe đơn hàng realtime
+            // Lắng nghe đơn hàng realtime - QUAN TRỌNG: ĐÂY LÀ PHẦN BẠN THIẾU
             const ordersRef = db.collection("orders");
             const qOrders = ordersRef.orderBy("createdAt", "desc");
 
             ordersUnsubscribe = qOrders.onSnapshot((snapshot) => {
+                const previousOrdersCount = orders.length;
                 orders = [];
-                snapshot.forEach(doc => {
-                    const order = doc.data();
-                    order.id = doc.id;
-                    orders.push(order);
+                
+                snapshot.docChanges().forEach(change => {
+                    const order = change.doc.data();
+                    order.id = change.doc.id;
+                    
+                    if (change.type === 'added') {
+                        // Đơn hàng mới được thêm
+                        orders.push(order);
+                        
+                        // Hiển thị thông báo cho đơn hàng mới (trừ lần đầu load)
+                        if (!isFirstLoad && previousOrdersCount > 0) {
+                            showNewOrderNotification(order);
+                        }
+                    } else if (change.type === 'modified') {
+                        // Đơn hàng được cập nhật
+                        const index = orders.findIndex(o => o.id === change.doc.id);
+                        if (index !== -1) {
+                            orders[index] = order;
+                        }
+                    } else if (change.type === 'removed') {
+                        // Đơn hàng bị xóa
+                        orders = orders.filter(o => o.id !== change.doc.id);
+                    }
+                });
+                
+                // Sắp xếp lại orders theo thời gian mới nhất
+                orders.sort((a, b) => {
+                    const timeA = a.createdAt?.toDate() || new Date(0);
+                    const timeB = b.createdAt?.toDate() || new Date(0);
+                    return timeB - timeA;
                 });
                 
                 loadOrders();
                 updateOrderStats();
                 updateFirebaseStatus('connected', '🟢 Đã kết nối Firebase');
                 console.log('📦 Đã tải', orders.length, 'đơn hàng từ Firebase');
+                
+                // Đánh dấu đã load lần đầu xong
+                if (isFirstLoad) {
+                    isFirstLoad = false;
+                }
+                
             }, (error) => {
                 console.error('Lỗi lắng nghe đơn hàng:', error);
                 updateFirebaseStatus('disconnected', '🔴 Lỗi kết nối Firebase');
@@ -1003,6 +1098,71 @@
             }, (error) => {
                 console.error('Lỗi lắng nghe tin nhắn:', error);
             });
+        }
+
+        // ========== THÔNG BÁO ĐƠN HÀNG MỚI ==========
+        function showNewOrderNotification(order) {
+            newOrdersCount++;
+            
+            const notification = document.createElement('div');
+            notification.className = 'new-order-notification';
+            notification.innerHTML = `
+                <i class="fas fa-bell" style="font-size: 1.5rem;"></i>
+                <div>
+                    <strong>🆕 ĐƠN HÀNG MỚI!</strong>
+                    <div style="font-size: 0.9rem; margin-top: 5px;">
+                        ${order.customerName || 'Khách'} - ${order.total ? order.total.toLocaleString('vi-VN') + '₫' : ''}
+                    </div>
+                    <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 3px;">
+                        Click để xem chi tiết
+                    </div>
+                </div>
+                <span class="new-order-badge">${newOrdersCount}</span>
+            `;
+            
+            notification.style.cursor = 'pointer';
+            notification.onclick = function() {
+                viewOrder(order.id);
+                this.remove();
+                newOrdersCount = 0;
+            };
+            
+            document.getElementById('notificationContainer').appendChild(notification);
+            
+            // Phát âm thanh thông báo
+            playNotificationSound();
+            
+            // Tự động ẩn sau 5 giây
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                    newOrdersCount = Math.max(0, newOrdersCount - 1);
+                }
+            }, 5000);
+        }
+
+        function playNotificationSound() {
+            // Tạo âm thanh thông báo đơn giản
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.1);
+                gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (error) {
+                console.log('Không thể phát âm thanh thông báo');
+            }
         }
 
         function processMessages(snapshot) {
@@ -1084,8 +1244,8 @@
                 return;
             }
             
-            // Hiển thị 5 đơn hàng mới nhất
-            const recentOrders = orders.slice(0, 5);
+            // Hiển thị 10 đơn hàng mới nhất
+            const recentOrders = orders.slice(0, 10);
             
             let html = `
                 <table>
@@ -1129,8 +1289,8 @@
                             <button class="action-btn btn-view" onclick="viewOrder('${order.id}')">
                                 <i class="fas fa-eye"></i> Xem
                             </button>
-                            <button class="action-btn btn-edit" onclick="updateOrderStatus('${order.id}', 'delivered')">
-                                <i class="fas fa-check"></i> Hoàn tất
+                            <button class="action-btn btn-edit" onclick="updateOrderStatus('${order.id}', 'confirmed')">
+                                <i class="fas fa-check"></i> Xác nhận
                             </button>
                         </td>
                     </tr>
@@ -1148,9 +1308,12 @@
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 console.log('✅ Đã cập nhật trạng thái đơn hàng:', newStatus);
+                
+                // Hiển thị thông báo thành công
+                showToast('✅ Đã cập nhật trạng thái đơn hàng!', 'success');
             } catch (error) {
                 console.error('Lỗi cập nhật đơn hàng:', error);
-                alert('❌ Lỗi cập nhật trạng thái! Vui lòng thử lại.');
+                showToast('❌ Lỗi cập nhật trạng thái!', 'error');
             }
         }
 
@@ -1159,7 +1322,7 @@
                 const doc = await db.collection("orders").doc(orderId).get();
                 
                 if (!doc.exists) {
-                    alert('Không tìm thấy đơn hàng!');
+                    showToast('Không tìm thấy đơn hàng!', 'error');
                     return;
                 }
                 
@@ -1167,7 +1330,7 @@
                 showOrderModal(order, orderId);
             } catch (error) {
                 console.error('Lỗi lấy thông tin đơn hàng:', error);
-                alert('❌ Lỗi tải thông tin đơn hàng!');
+                showToast('❌ Lỗi tải thông tin đơn hàng!', 'error');
             }
         }
 
@@ -1420,7 +1583,7 @@
                 console.log('📤 Đã gửi tin nhắn đến:', currentChatUser);
             } catch (error) {
                 console.error('Lỗi gửi tin nhắn:', error);
-                alert('❌ Lỗi gửi tin nhắn! Vui lòng thử lại.');
+                showToast('❌ Lỗi gửi tin nhắn!', 'error');
             }
         }
 
@@ -1429,7 +1592,7 @@
             if (!file || !currentChatUser) return;
 
             if (!file.type.match('image.*')) {
-                alert('Vui lòng chọn file hình ảnh!');
+                showToast('Vui lòng chọn file hình ảnh!', 'error');
                 return;
             }
 
@@ -1449,7 +1612,7 @@
                     event.target.value = ''; // Reset input file
                 } catch (error) {
                     console.error('Lỗi gửi hình ảnh:', error);
-                    alert('❌ Lỗi gửi hình ảnh! Vui lòng thử lại.');
+                    showToast('❌ Lỗi gửi hình ảnh!', 'error');
                 }
             };
             reader.readAsDataURL(file);
@@ -1500,10 +1663,11 @@
                     
                     // Reset chat interface
                     resetChatInterface();
+                    showToast('✅ Đã xóa cuộc trò chuyện!', 'success');
                     console.log('✅ Đã xóa cuộc trò chuyện với:', currentChatUser);
                 } catch (error) {
                     console.error('Lỗi xóa cuộc trò chuyện:', error);
-                    alert('❌ Lỗi xóa cuộc trò chuyện!');
+                    showToast('❌ Lỗi xóa cuộc trò chuyện!', 'error');
                 }
             }
         }
@@ -1579,12 +1743,43 @@
             try {
                 const orderTime = new Date(orderDate).getTime();
                 const now = new Date().getTime();
-                const twentyFourHours = 24 * 60 * 60 * 1000;
+                const oneHour = 60 * 60 * 1000; // 1 giờ
                 
-                return (now - orderTime) < twentyFourHours;
+                return (now - orderTime) < oneHour;
             } catch (error) {
                 return false;
             }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+                z-index: 10000;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            `;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${message}
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    document.body.removeChild(toast);
+                }
+            }, 3000);
         }
 
         function setupEventListeners() {
@@ -1602,7 +1797,7 @@
 
         function exportToExcel() {
             if (orders.length === 0) {
-                alert('Không có đơn hàng nào để xuất!');
+                showToast('Không có đơn hàng nào để xuất!', 'error');
                 return;
             }
             
@@ -1633,10 +1828,10 @@
                 
                 const date = new Date().toISOString().split('T')[0];
                 XLSX.writeFile(wb, `don_hang_${date}.xlsx`);
-                alert(`Đã xuất file Excel thành công! Tổng ${orders.length} đơn hàng.`);
+                showToast(`Đã xuất file Excel thành công! Tổng ${orders.length} đơn hàng.`, 'success');
             } catch (error) {
                 console.error('Lỗi xuất Excel:', error);
-                alert('Có lỗi khi xuất file Excel!');
+                showToast('Có lỗi khi xuất file Excel!', 'error');
             }
         }
 
@@ -1659,10 +1854,10 @@
                     });
                     await messagesBatch.commit();
 
-                    alert('✅ Đã xóa tất cả dữ liệu!');
+                    showToast('✅ Đã xóa tất cả dữ liệu!', 'success');
                 } catch (error) {
                     console.error('Lỗi xóa dữ liệu:', error);
-                    alert('❌ Lỗi xóa dữ liệu!');
+                    showToast('❌ Lỗi xóa dữ liệu!', 'error');
                 }
             }
         }
@@ -1681,165 +1876,7 @@
             if (messagesUnsubscribe) messagesUnsubscribe();
         });
 
-        console.log('🚀 Admin Dashboard với Firebase đã sẵn sàng!');
+        console.log('🚀 Admin Dashboard với REAL-TIME NOTIFICATIONS đã sẵn sàng!');
     </script>
-
-<!-- Firebase helpers -->
-<script type="module">
-  // Firebase app already expected in js/firebase-config.js (exports: db, auth, storage)
-  import { db, auth, storage } from "./js/firebase-config.js";
-  import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, updateDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-  import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
-  // helper functions used by injected code
-  window._firebase_helpers = {
-    addOrder: async (order) => {
-      return await addDoc(collection(db, "orders"), { ...order, status: "pending", createdAt: serverTimestamp() });
-    },
-    sendChatMessage: async (userId, message) => {
-      // message: { text, sender, imageUrl? }
-      const chatCol = collection(db, "chats", userId, "messages");
-      return await addDoc(chatCol, { ...message, createdAt: serverTimestamp() });
-    },
-    uploadImageAndGetUrl: async (file, pathPrefix="chat_images") => {
-      const p = `${pathPrefix}/${Date.now()}_${file.name}`;
-      const sRef = storageRef(storage, p);
-      const snap = await uploadBytes(sRef, file);
-      const url = await getDownloadURL(snap.ref);
-      return url;
-    },
-    listenOrders: (onUpdate) => {
-      const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
-      return onSnapshot(q, onUpdate);
-    },
-    listenUserChatsList: (onUpdate) => {
-      // get all chats (root 'chats' collection) -> list userIds with latest message
-      const chatsRoot = collection(db, "chats");
-      // Note: Firestore doesn't allow easy list of subcollections; admin will fetch by listing chat documents (we will store a 'meta' doc per user in 'chats_meta')
-      const qmeta = query(collection(db, "chats_meta"), orderBy("lastUpdated", "desc"));
-      return onSnapshot(qmeta, onUpdate);
-    },
-    listenChatMessages: (userId, onUpdate) => {
-      const q = query(collection(db, "chats", userId, "messages"), orderBy("createdAt", "asc"));
-      return onSnapshot(q, onUpdate);
-    }
-  };
-</script>
-<script type="module">
-import { auth } from './js/firebase-config.js';
-// Admin credentials check and redirect if not admin
-auth.onAuthStateChanged(async user => {
-  const adminEmail = 'admin@tinytags.com';
-  if(!user){
-    // show a simple login form inline if needed
-    const loginForm = document.getElementById('admin-login-form');
-    if(loginForm){
-      loginForm.style.display = 'block';
-      loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = loginForm.querySelector('input[name=email]').value;
-        const password = loginForm.querySelector('input[name=password]').value;
-        try {
-          await auth.signInWithEmailAndPassword(email, password);
-        } catch(err){
-          alert('Đăng nhập lỗi: ' + err.message);
-        }
-      });
-    } else {
-      window.location.href = 'login.html';
-    }
-    return;
-  }
-  if(user.email !== adminEmail){
-    alert('Bạn không có quyền admin');
-    window.location.href = 'index.html';
-    return;
-  }
-
-  // At this point user is admin
-  // Listen orders realtime and show notification bell
-  const ordersContainer = document.getElementById('orders-list') || document.querySelector('.orders-list');
-  const bellEl = document.getElementById('order-bell') || document.querySelector('.order-bell');
-
-  window._firebase_helpers.listenOrders((snap) => {
-    if(!ordersContainer) return;
-    ordersContainer.innerHTML = '';
-    snap.forEach(docSnap => {
-      const o = docSnap.data();
-      const id = docSnap.id;
-      const div = document.createElement('div');
-      div.className = 'order-card';
-      div.innerHTML = `<p><b>ID:</b> ${id}</p><p><b>Khách:</b> ${o.customerName || o.userId}</p><p><b>Tổng:</b> ${o.total}</p><p><b>Trạng thái:</b> ${o.status}</p><button data-id="${id}" class="mark-done">Hoàn tất</button>`;
-      ordersContainer.appendChild(div);
-    });
-    // show bell indicator
-    if(bellEl){
-      bellEl.classList.add('has-new');
-    }
-  });
-
-  // Admin chat: show list of chat users from chats_meta collection
-  const usersListEl = document.getElementById('chat-users') || document.querySelector('.chat-users');
-  const chatMessagesEl = document.getElementById('chat-list') || document.querySelector('.chat-list');
-
-  window._firebase_helpers.listenUserChatsList((snap) => {
-    if(!usersListEl) return;
-    usersListEl.innerHTML = '';
-    snap.forEach(docSnap => {
-      const meta = docSnap.data();
-      const uid = docSnap.id;
-      const li = document.createElement('div');
-      li.className = 'chat-user';
-      li.innerHTML = `<button data-uid="${uid}" class="open-chat">${meta.displayName || uid}</button><small>${meta.lastMessage || ''}</small>`;
-      usersListEl.appendChild(li);
-    });
-    // attach click handlers
-    document.querySelectorAll('.open-chat').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const uid = e.target.dataset.uid;
-        openChat(uid);
-      });
-    });
-  });
-
-  let currentUnsub = null;
-  window.openChat = (uid) => {
-    if(currentUnsub) currentUnsub(); // unsubscribe previous
-    chatMessagesEl.innerHTML = '';
-    currentUnsub = window._firebase_helpers.listenChatMessages(uid, (snap) => {
-      chatMessagesEl.innerHTML = '';
-      snap.forEach(docSnap => {
-        const m = docSnap.data();
-        const p = document.createElement('p');
-        let inner = '';
-        if(m.imageUrl) inner += `<div><img src="${m.imageUrl}" style="max-width:200px"/></div>`;
-        inner += `<div>${m.text || ''}</div><small>${m.sender}</small>`;
-        p.innerHTML = inner;
-        chatMessagesEl.appendChild(p);
-      });
-      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-    });
-    // attach send reply form
-    const replyForm = document.getElementById('adminReplyForm');
-    if(replyForm){
-      replyForm.onsubmit = async (e) => {
-        e.preventDefault();
-        const text = replyForm.querySelector('input[name=reply]')?.value || replyForm.querySelector('textarea[name=reply]')?.value || '';
-        const fileInput = replyForm.querySelector('input[type=file]');
-        let imageUrl = null;
-        if(fileInput && fileInput.files && fileInput.files[0]){
-          try {
-            imageUrl = await window._firebase_helpers.uploadImageAndGetUrl(fileInput.files[0]);
-          } catch(err){ console.error('upload error', err); }
-        }
-        if(!text && !imageUrl) return;
-        await window._firebase_helpers.sendChatMessage(uid, { text, sender: 'admin', imageUrl });
-        if(replyForm.querySelector('input[name=reply]')) replyForm.querySelector('input[name=reply]').value='';
-        if(replyForm.querySelector('textarea[name=reply]')) replyForm.querySelector('textarea[name=reply]').value='';
-        if(fileInput) fileInput.value='';
-      };
-    }
-  };
-});
-</script>
 </body>
 </html>
