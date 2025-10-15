@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", () => {
   function renderProducts(list) {
     const container = document.getElementById("products-container");
     container.innerHTML = "";
@@ -637,3 +638,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 }); 
+});
