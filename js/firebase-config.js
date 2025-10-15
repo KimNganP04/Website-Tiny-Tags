@@ -1,10 +1,9 @@
-// firebase-config.js
+// firebaseConfig.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBiXnYvACDsrVFok3Qoqa28hoCaEUywkkU",
   authDomain: "tiny-tags.firebaseapp.com",
@@ -16,10 +15,9 @@ const firebaseConfig = {
   measurementId: "G-MYGSXPKXFK"
 };
 
-// Khởi tạo app & export các service cần dùng
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);     // Firestore (tài liệu)
-const auth = getAuth(app);        // Authentication
-const storage = getStorage(app);  // Storage (nếu cần upload ảnh)
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
 
 export { app, db, auth, storage };
