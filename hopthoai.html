@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Hộp thoại | Tiny Tags</title>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ <!-- Firebase SDK -->
+ <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+ <!-- ========== HEADER ========== -->
+ <style>
+/* CSS HEADER */
+:root {
+    --max-w: 1200px;
+    --bg-1: #000000;
+    --bg-2: #000000;
+    --muted: #fff;
+    --text: #eef2f7;
+    --accent: #fe2c55;
+    --accent-2: #ff8a2d;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-border: rgba(255, 255, 255, 0.06);
+    --shadow: rgba(2, 6, 23, 0.45);
+    --radius: 12px;
+}
+
+/* Reset body để không có khoảng trắng */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  background: #fff;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+* { box-sizing: border-box }
+a { text-decoration: none; color: inherit }
+img { max-width: 100%; display: block }
+
+header.site-header{
+    background: var(--bg-2);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    position: sticky; top:0; z-index:1200;
+    box-shadow: 0 6px 18px rgba(15,23,36,0.04);
+  }
+  .header-container{
+    max-width:var(--max-w);
+    margin:0 auto;
+    padding:12px 18px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  }
+  .logo img{height:56px; display:block}
+
+  .search-box{position:relative; flex:1 1 520px; max-width:60vw; min-width:160px}
+  .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#605f5f;font-size:1.05rem;pointer-events:none}
+  .search-input{
+    width:100%; height:44px; padding:10px 16px 10px 44px; border-radius:999px;
+    border:1px solid #3e3e3f; background:#ffffff; color:#000000; font-size:0.95rem;
+    outline:none; transition:box-shadow .12s, transform .08s, border-color .12s;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.35);
+  }
+  .search-input::placeholder{ color: #5c5a5a}
+
+  .header-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+  .cart-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;cursor:pointer}
+  .cart-icon{width:28px;height:28px;object-fit:contain}
+  .cart-badge{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;min-width:20px;height:20px;padding:0 6px;border-radius:999px;font-size:0.75rem;display:inline-flex;align-items:center;justify-content:center}
+
+  #user-section{display:flex;align-items:center;gap:8px;font-family:inherit}
+  .user-name{background:#f3f4f6;color:#0b0c0f;padding:6px 12px;border-radius:20px;font-weight:600;max-width:260px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+  .logout-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:6px 12px;border-radius:20px;font-weight:600;cursor:pointer}
+  .logout-btn:hover{background:var(--accent);color:#fff;transform:translateY(-1px)}
+  .login-btn{    
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;}
+
+  nav.main-menu{width:100%;order:2;margin-top:10px;display:flex;justify-content:center}
+  .main-menu ul{display:flex;gap:24px;list-style:none;margin:0;padding:6px 0;align-items:center;flex-wrap:wrap}
+  .main-menu a{color:var(--text);font-weight:700;padding:6px 8px}
+  .main-menu a:hover{color:var(--accent)}
+
+  .brand-menu{position:relative}
+  .brand-menu .submenu {
+      display: none; position: absolute; left: 0; top: calc(100% + 8px); min-width: 180px;
+      background: #000; color: #eef2f7; border-radius: 10px;
+      box-shadow: 0 12px 36px rgba(15,23,36,0.08);
+      overflow: hidden; z-index: 400;
+      transform: translateY(-6px); opacity: 0;
+      transition: opacity .12s, transform .12s; pointer-events: none
+    }
+    .brand-menu:hover .submenu,
+    .brand-menu:focus-within .submenu {
+      display: block; transform: translateY(0); opacity: 1; pointer-events: auto
+    }
+    .submenu li a {
+      display: block; padding: 10px 14px; font-weight: 700; color: #eef2f7 !important
+    }
+    .submenu li a:hover { background: #292929; color: #fe2c55 !important }
+    main {
+      display: flex;
+      justify-content: center; /* Căn giữa container */
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .container {
+      width: 900px;
+      max-width: 100%;
+      height: 600px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(1, 1, 1, 0.5);
+      display: flex;
+    }
+    .shop-list {
+      width: 30%;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+    }
+    .shop-item {
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s;
+    }
+    .shop-item:hover { background-color: #e9e9e9; }
+    .shop-item.active { background-color: #ddd; }
+    .shop-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .shop-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .shop-name { 
+      font-weight: bold; 
+      color: #333;
+    }
+    .shop-desc {
+      font-size: 12px;
+      color: #666;
+      margin-top: 3px;
+    }
+
+    /* ---- CSS MỚI VÀ CẬP NHẬT CHO KHUNG CHAT ---- */
+    .chat-box {
+      width: 70%;
+      display: flex;
+      flex-direction: column; /* Sắp xếp các phần tử theo chiều dọc */
+    }
+    .chat-header {
+      padding: 15px 20px;
+      background-color: #f0f0f0;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .shop-info {
+      display: flex;
+      align-items: center;
+    }
+    .shop-info .shop-avatar {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+    .shop-details h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #333;
+    }
+    .shop-details p {
+      margin: 0;
+      font-size: 12px;
+      color: #666;
+    }
+    .social-links {
+      display: flex;
+      gap: 10px;
+    }
+    .social-links a {
+      color: #666;
+      font-size: 18px;
+      transition: color 0.2s;
+    }
+    .social-links a:hover {
+      color: #fe2c55;
+    }
+    .chat-messages-container {
+      flex: 1; /* Chiếm hết không gian còn lại */
+      padding: 20px;
+      overflow-y: auto; /* Thêm thanh cuộn khi tin nhắn dài */
+      background-color: #f4f4f4;
+    }
+   /* ---- ĐÂY LÀ KHUNG CHỨA TẤT CẢ TIN NHẮN ---- */
+/* BỔ SUNG ĐOẠN CSS NÀY VÀO FILE */
+
+/* ---- KHỐI CSS HOÀN CHỈNH CHO TIN NHẮN ---- */
+
+/* Khung chứa TẤT CẢ tin nhắn của MỘT shop */
+.messages {
+  display: flex;            /* BẮT BUỘC: Kích hoạt Flexbox */
+  flex-direction: column; /* Sắp xếp các tin nhắn theo chiều dọc */
+}
+
+/* Style chung cho MỘT bong bóng tin nhắn */
+.message {
+  max-width: 80%;           /* Giới hạn độ rộng tối đa */
+  padding: 10px 15px;
+  border-radius: 18px;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  word-wrap: break-word;    /* Tự xuống dòng khi chữ dài */
+}
+
+/* Tin nhắn của shop (căn trái và tự co giãn) */
+.shop-message {
+  background-color: #e9e9eb;
+  color: #000;
+  align-self: flex-start; /* QUAN TRỌNG: Tự đẩy mình sang trái và co lại */
+}
+
+/* Tin nhắn của người dùng (căn phải và tự co giãn) */
+.user-message {
+  background-color: #0084ff;
+  color: white;
+  align-self: flex-end;   /* QUAN TRỌNG: Tự đẩy mình sang phải và co lại */
+}
+
+/* Style riêng cho tin nhắn dạng thẻ sản phẩm */
+.card-message {
+  padding: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 300px;
+}
+
+/* Tin nhắn hình ảnh */
+.image-message {
+  padding: 8px;
+  max-width: 250px;
+}
+
+.image-message img {
+  border-radius: 8px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.image-caption {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #666;
+  word-break: break-word;
+}
+/* ---- KẾT THÚC KHỐI CSS ---- */
+
+    .chat-input-area {
+      display: flex;
+      border-top: 1px solid #ccc;
+      padding: 10px;
+      background-color: #ffffff;
+      position: relative;
+      align-items: center;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+      margin-right: 10px;
+    }
+    .chat-input-area button {
+      background-color: #033549;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .chat-input-area button:hover {
+      opacity: 0.8;
+    }
+    
+    /* Nút xóa lịch sử */
+    .clear-history-btn {
+      background-color: transparent;
+      color: #666;
+      border: 1px solid #ccc;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-right: 10px;
+      transition: all 0.2s;
+    }
+    .clear-history-btn:hover {
+      opacity: 0.8;
+    }
+    
+    /* Nút gửi hình ảnh */
+    .image-upload-btn {
+      background-color: transparent;
+      color: #666;
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .image-upload-btn:hover {
+      poacity: 0.8;
+    }
+    
+    /* Input file ẩn */
+    .file-input {
+      display: none;
+    }
+    
+    /* Preview hình ảnh trước khi gửi */
+    .image-preview {
+      position: absolute;
+      bottom: 70px;
+      right: 20px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+      max-width: 200px;
+    }
+    
+    .image-preview img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 4px;
+    }
+    
+    .preview-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    
+    .preview-actions button {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .send-image-btn {
+      background: #0084ff;
+      color: white;
+    }
+    
+    .cancel-preview-btn {
+      background: #ccc;
+      color: #333;
+    }
+    
+    /* Card tin nhắn khuyến mãi */
+    .card-message {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      max-width: 300px;
+    }
+    .card-image { 
+      width: 100%; 
+      height: 150px;
+      object-fit: cover;
+      display: block; 
+    }
+    .card-content { padding: 10px; }
+    .card-content h4 { margin: 0 0 5px; font-size: 16px; color: #333; }
+    .card-content p { margin: 0 0 10px; font-size: 14px; color: #666; }
+    .card-buttons { display: flex; gap: 8px; }
+    .card-buttons button {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: #000000;
+      color: #fff;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+    .card-buttons button:hover { background: #7b0303; }
+    /* ------------------------------------------- */
+
+    @media(max-width: 768px){
+      .container { flex-direction: column; height: 80vh; }
+      .shop-list { width: 100%; height: 150px; display: flex; border-right: none; border-bottom: 1px solid #ccc;}
+      .chat-box { width: 100%; flex: 1; }
+      .shop-item { flex: 1; justify-content: center; flex-direction: column; }
+      .chat-header { padding: 10px; }
+      .social-links { display: none; }
+      .image-preview {
+        right: 10px;
+        max-width: 150px;
+      }
+    }
+    
+    /* Footer styles */
+    footer {
+      margin-top: 40px;
+    }
+    
+    .footer-container {
+      background-color: #000000; 
+      color: #ffffff; 
+      padding: 20px 20px; 
+      display: flex; 
+      justify-content: space-around; 
+      align-items: flex-start; 
+      flex-wrap: wrap; 
+      text-align: center;
+    }
+    
+    .footer-logo, .footer-info, .footer-license, .footer-payment {
+      flex: 1;
+      min-width: 250px;
+      margin-bottom: 20px;
+      padding: 0 15px;
+    }
+    
+    .footer-logo img {
+      height: 100px;
+      margin-bottom: 10px;
+    }
+    
+    .footer-container h3 {
+      margin: 0 0 15px;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    
+    .footer-container p {
+      margin: 8px 0;
+      font-size: 0.9rem;
+      color: #a0aec0;
+    }
+    
+    /* Thêm hiệu ứng loading */
+    .loading-indicator {
+      display: none;
+      text-align: center;
+      padding: 10px;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .loading-indicator.active {
+      display: block;
+    }
+    
+    .typing-indicator {
+      display: none;
+      padding: 10px 15px;
+      background-color: #e9e9eb;
+      border-radius: 18px;
+      align-self: flex-start;
+      max-width: 80px;
+      margin-bottom: 10px;
+    }
+    
+    .typing-indicator.active {
+      display: block;
+    }
+    
+    .typing-dots {
+      display: flex;
+      justify-content: space-between;
+      width: 30px;
+    }
+    
+    .typing-dots span {
+      width: 8px;
+      height: 8px;
+      background-color: #999;
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out;
+    }
+    
+    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+    
+    @keyframes typing {
+      0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Firebase status */
+    .firebase-status {
+      position: fixed;
+      top: 80px; /* Đặt xuống dưới header */
+      right: 10px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 1000; /* Giảm z-index */
+      background: #4CAF50;
+      color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      max-width: 250px;
+      word-wrap: break-word;
+    }
+
+    .status-connected { 
+      background: #4CAF50; 
+      animation: fadeOut 2s ease-in-out 2s forwards; /* Tự động ẩn sau 2 giây */
+    }
+
+    .status-disconnected { 
+      background: #f44336; 
+    }
+
+    .status-connecting { 
+      background: #ff9800; 
+    }
+
+    /* Animation tự động ẩn */
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; visibility: hidden; }
+    }
+ </style>
+</head>
+<body>
+
+ <!-- Firebase Status -->
+ <div class="firebase-status status-connecting" id="firebaseStatus">
+   <i class="fas fa-sync fa-spin"></i> Đang kết nối Firebase...
+ </div>
+
+ <!-- ========== HEADER ========== -->
+<header class="site-header">
+    <div class="header-container">
+      <div class="logo">
+        <a href="index.html"><img src="Hình/LOGO/logo tinytags.png" alt="Logo"></a>
+      </div>
+
+      <div class="search-box" role="search" aria-label="Tìm kiếm">
+        <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+        <input class="search-input" type="search" placeholder="Tìm sản phẩm, thương hiệu..." aria-label="Tìm kiếm">
+      </div>
+
+      <div class="header-right" aria-hidden="false">
+        <a href="cart.html" class="cart-btn" aria-label="Giỏ hàng">
+          <img class="cart-icon" src="Hình/CART/shopping-cart-304843_1280.webp" alt="Giỏ hàng">
+          <span class="cart-badge" id="cartCount" style="display:none">0</span>
+        </a>
+        <div id="user-section"></div>
+      </div>
+
+      <nav class="main-menu" aria-label="Main menu">
+        <ul>
+          <li><a href="index.html">TRANG CHỦ</a></li>
+          <li><a href="Introduce.html">GIỚI THIỆU</a></li>
+          <li class="brand-menu">
+            <a href="store.html">CỬA HÀNG</a>
+          </li>
+          <li><a href="livestream.html">TRANG LIVESTREAM</a></li>
+          <li><a href="hopthoai.html">HỘP THOẠI</a></li>
+          <li><a href="thongbao.html">THÔNG BÁO</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+<main>
+  <div class="container">
+    <div class="shop-list" id="shop-list">
+      <div class="shop-item active" data-shop="tinytags">
+        <div class="shop-avatar">
+          <img src="Hình/LOGO/tiny.png" alt="Tiny Tags">
+        </div>
+        <div>
+          <div class="shop-name">Tiny Tags</div>
+          <div class="shop-desc">Chuyên móc khóa & phụ kiện</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-box" id="chat-box">
+      <!-- Header mới cho chat -->
+      <div class="chat-header">
+        <div class="shop-info">
+          <div class="shop-avatar">
+            <img src="Hình/LOGO/tiny.png" alt="Tiny Tags">
+          </div>
+          <div class="shop-details">
+            <h3>Tiny Tags</h3>
+            <p>Chuyên móc khóa & phụ kiện</p>
+          </div>
+        </div>
+        <div class="social-links">
+          <a href="https://www.facebook.com/profile.php?id=61581668064702" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+          <a href="https://www.tiktok.com/@tinytags.store?is_from_webapp=1&sender_device=pc" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a href="https://zalo.me/0782511460" target="_blank" title="Zalo"><i class="fab fa-weixin"></i></a>
+        </div>
+      </div>
+      
+      <div class="chat-messages-container">
+        <div class="loading-indicator" id="loading-indicator">Đang tải tin nhắn...</div>
+        <div class="typing-indicator" id="typing-indicator">
+          <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+    
+        <div class="messages" data-shop="tinytags" id="tinytags-messages">
+            <!-- Tin nhắn sẽ được tải từ Firestore -->
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <button class="clear-history-btn" id="clear-history-btn">Xóa lịch sử</button>
+        <button class="image-upload-btn" id="image-upload-btn" title="Gửi hình ảnh">
+          <i class="fas fa-image"></i>
+        </button>
+        <input type="file" id="file-input" class="file-input" accept="image/*">
+        <input type="text" id="chat-input" placeholder="Nhập tin nhắn...">
+        <button id="send-btn">Gửi</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+    <div class="footer-container">
+      <div class="footer-logo">
+        <img src="Hình/LOGO/logo tinytags.png" alt="tiny tags">
+      </div>
+      <div class="footer-info">
+        <h3>THÔNG TIN LIÊN HỆ</h3>
+        <p><strong>TINY TAGS</strong></p>
+        <p>Địa chỉ: Khu phố 6, phường Linh Trung, TP Thủ Đức, TP Hồ Chí Minh</p>
+        <p>Email: tinytags.store@gmail.com</p>
+      </div>
+      <div class="footer-license">
+        <h3>HỖ TRỢ KHÁCH HÀNG</h3>
+        <p>Chăm sóc khách hàng</p>
+        <p>Hướng dẫn mua hàng</p>
+        <p>Hỗ trợ đổi trả hàng</p>
+      </div>
+      <div class="footer-payment">
+        <h3>CHÍNH SÁCH</h3>
+        <p>Chính sách đổi hàng</p>
+        <p>Bảo mật thông tin</p>
+        <p>Chính sách giao hàng</p>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  // ========== FIREBASE CONFIG ==========
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_your-api-key-here",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "1:123456789:web:abcdef123456"
+  };
+
+  // Initialize Firebase
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  let unsubscribeMessages = null;
+  let currentUser = null;
+
+  // ========== FIREBASE FUNCTIONS ==========
+
+  // Khởi tạo Firebase và lắng nghe tin nhắn real-time
+  function initializeFirebaseChat() {
+    try {
+      // Lấy thông tin user
+      currentUser = JSON.parse(localStorage.getItem('user')) || { username: 'Khách' };
+      const userName = currentUser.username || 'Khách';
+
+      // Tham chiếu đến collection messages
+      const messagesRef = db.collection('messages')
+        .orderBy('createdAt', 'asc')
+        .limit(100);
+
+      // Lắng nghe tin nhắn real-time
+      unsubscribeMessages = messagesRef.onSnapshot((snapshot) => {
+        const messagesContainer = document.getElementById('tinytags-messages');
+        messagesContainer.innerHTML = '';
+
+        snapshot.forEach((doc) => {
+          const message = doc.data();
+          displayMessage(message);
+        });
+
+        // Cuộn xuống tin nhắn mới nhất
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+  // Cập nhật trạng thái Firebase
+function updateFirebaseStatus(status, message) {
+  const statusEl = document.getElementById('firebaseStatus');
+  statusEl.className = `firebase-status status-${status}`;
+  statusEl.innerHTML = message;
+  
+  // Tự động ẩn thông báo sau 3 giây nếu kết nối thành công
+  if (status === 'connected') {
+    setTimeout(() => {
+      statusEl.style.display = 'none';
+    }, 3000); // Ẩn sau 3 giây
+  } else {
+    statusEl.style.display = 'block'; // Hiện lại nếu có lỗi
+  }
+}
+
+  // Hiển thị tin nhắn
+  function displayMessage(message) {
+    const messagesContainer = document.getElementById('tinytags-messages');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${message.sender === 'admin' ? 'shop-message' : 'user-message'}`;
+    
+    if (message.type === 'image') {
+      // Tin nhắn hình ảnh
+      const img = document.createElement('img');
+      img.src = message.imageData;
+      img.alt = 'Hình ảnh đã gửi';
+      img.style.maxWidth = '200px';
+      img.style.borderRadius = '8px';
+      
+      messageDiv.appendChild(img);
+      
+      if (message.caption) {
+        const caption = document.createElement('div');
+        caption.className = 'image-caption';
+        caption.textContent = message.caption;
+        messageDiv.appendChild(caption);
+      }
+    } else {
+      // Tin nhắn văn bản
+      messageDiv.textContent = message.text;
+    }
+    
+    // Thêm thời gian
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'message-time';
+    timeDiv.style.fontSize = '0.7rem';
+    timeDiv.style.color = '#666';
+    timeDiv.style.marginTop = '5px';
+    timeDiv.textContent = formatTime(message.createdAt?.toDate() || new Date());
+    
+    messageDiv.appendChild(timeDiv);
+    messagesContainer.appendChild(messageDiv);
+  }
+
+  // Gửi tin nhắn lên Firestore
+  async function sendMessageToFirebase(messageData) {
+    try {
+      await db.collection('messages').add({
+        ...messageData,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        userId: currentUser?.username || 'guest'
+      });
+      return true;
+    } catch (error) {
+      console.error('Lỗi gửi tin nhắn:', error);
+      return false;
+    }
+  }
+
+  // Gửi hình ảnh lên Firestore
+  async function sendImageToFirebase(imageData, caption = '') {
+    try {
+      await db.collection('messages').add({
+        type: 'image',
+        imageData: imageData,
+        caption: caption,
+        sender: 'user',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        userId: currentUser?.username || 'guest'
+      });
+      return true;
+    } catch (error) {
+      console.error('Lỗi gửi hình ảnh:', error);
+      return false;
+    }
+  }
+
+  // Cập nhật trạng thái Firebase
+  function updateFirebaseStatus(status, message) {
+    const statusEl = document.getElementById('firebaseStatus');
+    statusEl.className = `firebase-status status-${status}`;
+    statusEl.innerHTML = message;
+  }
+
+  // ========== CHAT FUNCTIONS ==========
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('send-btn');
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
+    const imageUploadBtn = document.getElementById('image-upload-btn');
+    const fileInput = document.getElementById('file-input');
+    
+    let imagePreview = null;
+
+    // Khởi tạo Firebase chat
+    initializeFirebaseChat();
+
+    // Xử lý upload hình ảnh
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      if (!file.type.match('image.*')) {
+        alert('Vui lòng chọn file hình ảnh!');
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Kích thước file không được vượt quá 5MB!');
+        return;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        showImagePreview(e.target.result, file.name);
+      };
+      
+      reader.readAsDataURL(file);
+    }
+
+    // Hiển thị preview hình ảnh
+    function showImagePreview(imageData, fileName) {
+      removeImagePreview();
+      
+      imagePreview = document.createElement('div');
+      imagePreview.className = 'image-preview';
+      
+      const img = document.createElement('img');
+      img.src = imageData;
+      img.alt = 'Preview';
+      
+      const captionInput = document.createElement('input');
+      captionInput.type = 'text';
+      captionInput.placeholder = 'Thêm mô tả (tuỳ chọn)';
+      captionInput.style.width = '100%';
+      captionInput.style.marginTop = '8px';
+      captionInput.style.padding = '5px';
+      captionInput.style.border = '1px solid #ccc';
+      captionInput.style.borderRadius = '4px';
+      
+      const actions = document.createElement('div');
+      actions.className = 'preview-actions';
+      
+      const sendBtn = document.createElement('button');
+      sendBtn.className = 'send-image-btn';
+      sendBtn.textContent = 'Gửi';
+      sendBtn.onclick = async function() {
+        const success = await sendImageToFirebase(imageData, captionInput.value.trim());
+        if (success) {
+          removeImagePreview();
+        } else {
+          alert('❌ Lỗi gửi hình ảnh! Vui lòng thử lại.');
+        }
+      };
+      
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'cancel-preview-btn';
+      cancelBtn.textContent = 'Huỷ';
+      cancelBtn.onclick = removeImagePreview;
+      
+      actions.appendChild(sendBtn);
+      actions.appendChild(cancelBtn);
+      
+      imagePreview.appendChild(img);
+      imagePreview.appendChild(captionInput);
+      imagePreview.appendChild(actions);
+      
+      document.querySelector('.chat-box').appendChild(imagePreview);
+      captionInput.focus();
+    }
+
+    // Xóa preview hình ảnh
+    function removeImagePreview() {
+      if (imagePreview) {
+        imagePreview.remove();
+        imagePreview = null;
+        fileInput.value = '';
+      }
+    }
+
+    // Gửi tin nhắn
+    async function sendMessage() {
+      const messageText = chatInput.value.trim();
+      if (messageText === '') return;
+
+      const success = await sendMessageToFirebase({
+        text: messageText,
+        sender: 'user',
+        type: 'text'
+      });
+
+      if (success) {
+        chatInput.value = '';
+      } else {
+        alert('❌ Lỗi gửi tin nhắn! Vui lòng thử lại.');
+      }
+    }
+
+    // Xóa lịch sử chat (xóa tất cả tin nhắn trong Firestore)
+    async function clearChatHistory() {
+      if (confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử trò chuyện?')) {
+        try {
+          // Lấy tất cả tin nhắn
+          const snapshot = await db.collection('messages').get();
+          const batch = db.batch();
+          
+          snapshot.forEach((doc) => {
+            batch.delete(doc.ref);
+          });
+          
+          await batch.commit();
+          alert('Đã xóa lịch sử trò chuyện');
+        } catch (error) {
+          console.error('Lỗi xóa tin nhắn:', error);
+          alert('❌ Lỗi xóa lịch sử! Vui lòng thử lại.');
+        }
+      }
+    }
+
+    // Gửi tin khi nhấn nút "Gửi"
+    sendBtn.addEventListener('click', sendMessage);
+
+    // Gửi tin khi nhấn phím Enter
+    chatInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+
+    // Xử lý nút xóa lịch sử
+    clearHistoryBtn.addEventListener('click', clearChatHistory);
+
+    // Xử lý nút upload hình ảnh
+    imageUploadBtn.addEventListener('click', function() {
+      fileInput.click();
+    });
+
+    // Xử lý khi chọn file
+    fileInput.addEventListener('change', handleImageUpload);
+
+    // Dọn dẹp khi trang đóng
+    window.addEventListener('beforeunload', function() {
+      if (unsubscribeMessages) {
+        unsubscribeMessages();
+      }
+    });
+  });
+
+  // Hàm format thời gian
+  function formatTime(date) {
+    return date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  // Code để xóa dữ liệu trong console
+  function clearChatData() {
+    if (confirm('Xóa tất cả tin nhắn trong Firebase?')) {
+      db.collection('messages').get().then(snapshot => {
+        const batch = db.batch();
+        snapshot.forEach(doc => {
+          batch.delete(doc.ref);
+        });
+        return batch.commit();
+      }).then(() => {
+        console.log('✅ Đã xóa tất cả tin nhắn');
+        location.reload();
+      });
+    }
+  }
+
+  // Hiển thị hướng dẫn trong console
+  console.log('💬 Để xóa tất cả tin nhắn, chạy: clearChatData()');
+</script>
+
+<script>
+  // ========== HEADER USER SECTION ==========
+  function esc(s){ 
+    return String(s||'').replace(/[&<>"']/g, m => 
+      ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])
+    ); 
+  }
+
+  function updateUserSection(){
+    const root = document.getElementById('user-section');
+    if (!root) return;
+    
+    const user = JSON.parse(localStorage.getItem('user')) || null;
+    
+    if (user && (user.username || user.fullname)) {
+      const displayName = user.fullname || user.username;
+      root.innerHTML = `
+        <span class="user-name">Xin chào, ${esc(displayName)}</span>
+        <button class="logout-btn" id="logoutBtn">Đăng xuất</button>
+      `;
+      
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn && !logoutBtn._bound) {
+        logoutBtn._bound = true;
+        logoutBtn.addEventListener('click', function(){
+          localStorage.removeItem('user');
+          updateUserSection();
+          alert("Đã đăng xuất thành công!");
+          window.location.reload();
+        });
+      }
+    } else {
+      root.innerHTML = `
+        <a href="login.html" class="login-btn">Đăng nhập / Đăng ký</a>
+      `;
+    }
+  }
+
+  // Khởi chạy khi trang load
+  document.addEventListener('DOMContentLoaded', updateUserSection);
+  
+  // Cập nhật khi có thay đổi từ tab khác
+  window.addEventListener('storage', function(e){ 
+    if (e.key === 'user') updateUserSection(); 
+  });
+</script>
+
+
+<!-- Firebase helpers -->
+<script type="module">
+  // Firebase app already expected in js/firebase-config.js (exports: db, auth, storage)
+  import { db, auth, storage } from "./js/firebase-config.js";
+  import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, updateDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+  // helper functions used by injected code
+  window._firebase_helpers = {
+    addOrder: async (order) => {
+      return await addDoc(collection(db, "orders"), { ...order, status: "pending", createdAt: serverTimestamp() });
+    },
+    sendChatMessage: async (userId, message) => {
+      // message: { text, sender, imageUrl? }
+      const chatCol = collection(db, "chats", userId, "messages");
+      return await addDoc(chatCol, { ...message, createdAt: serverTimestamp() });
+    },
+    uploadImageAndGetUrl: async (file, pathPrefix="chat_images") => {
+      const p = `${pathPrefix}/${Date.now()}_${file.name}`;
+      const sRef = storageRef(storage, p);
+      const snap = await uploadBytes(sRef, file);
+      const url = await getDownloadURL(snap.ref);
+      return url;
+    },
+    listenOrders: (onUpdate) => {
+      const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+      return onSnapshot(q, onUpdate);
+    },
+    listenUserChatsList: (onUpdate) => {
+      // get all chats (root 'chats' collection) -> list userIds with latest message
+      const chatsRoot = collection(db, "chats");
+      // Note: Firestore doesn't allow easy list of subcollections; admin will fetch by listing chat documents (we will store a 'meta' doc per user in 'chats_meta')
+      const qmeta = query(collection(db, "chats_meta"), orderBy("lastUpdated", "desc"));
+      return onSnapshot(qmeta, onUpdate);
+    },
+    listenChatMessages: (userId, onUpdate) => {
+      const q = query(collection(db, "chats", userId, "messages"), orderBy("createdAt", "asc"));
+      return onSnapshot(q, onUpdate);
+    }
+  };
+</script>
+<script type="module">
+import { auth } from './js/firebase-config.js';
+// Uses global window._firebase_helpers from firebase snippet
+// Ensure user is logged in before allowing chat
+auth.onAuthStateChanged(user => {
+  if(!user){
+    alert('Bạn cần đăng nhập để chat.');
+    window.location.href = 'login.html';
+    return;
+  }
+  const userId = user.uid;
+  // UI elements
+  const chatList = document.getElementById('messages') || document.getElementById('chat-messages') || document.querySelector('.chat-messages');
+  const chatForm = document.getElementById('chatForm') || document.querySelector('#chat-form') || null;
+  const fileInput = document.querySelector('#chatImage') || document.querySelector('input[type=file]');
+  // listen messages for this user room
+  let unsubscribe = window._firebase_helpers.listenChatMessages(userId, (snapshot) => {
+    if(!chatList) return;
+    chatList.innerHTML = '';
+    snapshot.forEach(docSnap => {
+      const m = docSnap.data();
+      const div = document.createElement('div');
+      div.className = m.sender === 'admin' ? 'msg-admin' : 'msg-user';
+      let inner = '';
+      if(m.imageUrl){
+        inner += `<div><img src="${m.imageUrl}" alt="img" style="max-width:200px;"/></div>`;
+      }
+      inner += `<div>${m.text ? m.text : ''}</div><small>${m.sender}</small>`;
+      div.innerHTML = inner;
+      chatList.appendChild(div);
+    });
+    chatList.scrollTop = chatList.scrollHeight;
+  });
+
+  if(chatForm){
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = chatForm.querySelector('input[name=message]')?.value || chatForm.querySelector('textarea[name=message]')?.value || '';
+      let imageUrl = null;
+      if(fileInput && fileInput.files && fileInput.files[0]){
+        try {
+          imageUrl = await window._firebase_helpers.uploadImageAndGetUrl(fileInput.files[0]);
+        } catch(err){
+          console.error('Upload lỗi', err);
+          alert('Không thể upload ảnh.');
+        }
+      }
+      if(!text && !imageUrl) return;
+      await window._firebase_helpers.sendChatMessage(userId, { text, sender: 'user', imageUrl });
+      // clear form
+      if(chatForm.querySelector('input[name=message]')) chatForm.querySelector('input[name=message]').value = '';
+      if(chatForm.querySelector('textarea[name=message]')) chatForm.querySelector('textarea[name=message]').value = '';
+      if(fileInput) fileInput.value = '';
+    });
+  }
+});
+</script>
+</body>
+</html>

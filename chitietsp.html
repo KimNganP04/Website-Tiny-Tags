@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Sản Phẩm - TikTok Trendy Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --max-w: 1200px;
+            --bg-1: #000000;
+            --bg-2: #000000;
+            --muted: #fff;
+            --text: #eef2f7;
+            --accent: #fe2c55;
+            --accent-2: #ff8a2d;
+            --card-bg: rgba(255,255,255,0.03);
+            --card-border: rgba(255,255,255,0.06);
+            --shadow: rgba(2,6,23,0.45);
+            --radius: 12px;
+        }
+
+        /* Reset + base */
+        * { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; background: #fff; color: #333; -webkit-font-smoothing: antialiased; }
+        a { color: inherit; text-decoration: none; }
+        img { display: block; max-width: 100%; }
+
+        /* ========== HEADER ========== */
+        header.site-header {
+            background: var(--bg-2);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            position: sticky; top: 0; z-index: 1200;
+            box-shadow: 0 6px 18px rgba(15,23,36,0.04);
+        }
+        .header-container {
+            max-width: var(--max-w);
+            margin: 0 auto;
+            padding: 12px 18px;
+            display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+        }
+        .logo img { height: 56px; display: block; }
+        .search-box { position: relative; flex: 1 1 520px; max-width: 60vw; min-width: 160px; }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #605f5f; font-size: 1.05rem; pointer-events: none; }
+        .search-input {
+            width: 100%; height: 44px; padding: 10px 16px 10px 44px; border-radius: 999px;
+            border: 1px solid #3e3e3f; background: #ffffff; color: #000000; font-size: 0.95rem;
+            outline: none; transition: box-shadow .12s, transform .08s, border-color .12s;
+            box-shadow: 0 6px 18px rgba(2,6,23,0.35);
+        }
+        .search-input::placeholder { color: #5c5a5a; }
+        .header-right { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+        .cart-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; padding: 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.03); background: transparent; cursor: pointer; }
+        .cart-icon { width: 28px; height: 28px; object-fit: contain; }
+        .cart-badge { position: absolute; top: -6px; right: -6px; background: var(--accent); color: #fff; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; font-size: 0.75rem; display: inline-flex; align-items: center; justify-content: center; }
+        #user-section { display: flex; align-items: center; gap: 8px; font-family: inherit; }
+        .user-name { background: #f3f4f6; color: #0b0c0f; padding: 6px 12px; border-radius: 20px; font-weight: 600; max-width: 260px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word; }
+        .logout-btn { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 6px 12px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+        .logout-btn:hover { background: var(--accent); color: #fff; transform: translateY(-1px); }
+        .login-btn { background: transparent; border: 1px solid #fff; color: #fff; padding: 6px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; }
+        nav.main-menu { width: 100%; order: 2; margin-top: 10px; display: flex; justify-content: center; }
+        .main-menu ul { display: flex; gap: 24px; list-style: none; margin: 0; padding: 6px 0; align-items: center; flex-wrap: wrap; }
+        .main-menu a { color: var(--text); font-weight: 700; padding: 6px 8px; }
+        .main-menu a:hover { color: var(--accent); }
+        .brand-menu { position: relative; }
+        .brand-menu .submenu {
+            display: none; position: absolute; left: 0; top: calc(100% + 8px); min-width: 180px; background: #000000; color: var(--text); border-radius: 10px; box-shadow: 0 12px 36px rgba(15,23,36,0.08); overflow: hidden; z-index: 400; transform: translateY(-6px); opacity: 0; transition: opacity .12s, transform .12s; pointer-events: none;
+        }
+        .brand-menu:hover .submenu, .brand-menu:focus-within .submenu { display: block; transform: translateY(0); opacity: 1; pointer-events: auto; }
+        .submenu li a { display: block; padding: 10px 14px; font-weight: 700; color: var(--text) !important; }
+        .submenu li a:hover { background: #292929; color: var(--accent)!important; }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-top: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .search-result-item:hover {
+            background: rgba(254, 44, 85, 0.1);
+        }
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        main { 
+            max-width: var(--max-w); 
+            margin: 40px auto; 
+            padding: 0 20px; 
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+        
+        .breadcrumb a {
+            color: var(--accent);
+            transition: color 0.3s;
+        }
+        
+        .breadcrumb a:hover {
+            color: #ff6b9d;
+        }
+
+        /* Product Detail Container */
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        /* Product Images */
+        .product-images {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 400px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .thumbnail-images {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 8px 0;
+        }
+        
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .thumbnail.active {
+            border-color: var(--accent);
+        }
+        
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Product Info */
+        .product-info {
+            padding: 20px 0;
+        }
+        
+        .product-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: #2d3748;
+            line-height: 1.2;
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .stars {
+            color: #ffc107;
+            display: flex;
+            gap: 2px;
+        }
+        
+        .rating-text {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .current-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        
+        .original-price {
+            font-size: 1.2rem;
+            color: #a0aec0;
+            text-decoration: line-through;
+        }
+        
+        .discount {
+            background: var(--accent);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        
+        .shipping-info {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .shipping-info p {
+            margin: 0;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+        
+        .product-options {
+            margin-bottom: 24px;
+        }
+        
+        .option-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+        
+        .option-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .option-item {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .option-item:hover {
+            border-color: var(--accent);
+        }
+        
+        .option-item.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .color-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .color-option {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+        
+        .color-option.active {
+            border-color: var(--accent);
+        }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .quantity-title {
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .quantity-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #e2e8f0;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 700;
+        }
+        
+        .quantity-btn:hover {
+            background: #f7fafc;
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        .quantity-display {
+            font-size: 1.2rem;
+            font-weight: 700;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .stock-info {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 16px;
+        }
+        
+        .add-to-cart-btn, .buy-now-btn {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .add-to-cart-btn {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+        
+        .add-to-cart-btn:hover {
+            background: rgba(254, 44, 85, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .buy-now-btn {
+            background: linear-gradient(135deg, var(--accent), #ff6b9d);
+            color: white;
+            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.3);
+        }
+        
+        .buy-now-btn:hover {
+            background: linear-gradient(135deg, #e0264d, #ff5590);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(254, 44, 85, 0.4);
+        }
+
+        /* Product Tabs */
+        .product-tabs {
+            margin-bottom: 60px;
+        }
+        
+        .tab-headers {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+        
+        .tab-header {
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #718096;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab-header.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .tab-content {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+        
+        .tab-panel {
+            display: none;
+        }
+        
+        .tab-panel.active {
+            display: block;
+        }
+        
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .specs-table tr {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .specs-table td {
+            padding: 12px 16px;
+        }
+        
+        .specs-table td:first-child {
+            font-weight: 700;
+            width: 30%;
+            color: #2d3748;
+        }
+
+        /* Related Products */
+        .related-products {
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 24px;
+            color: #2d3748;
+            text-align: center;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e1e5e9;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        
+        .product-image-container {
+            position: relative;
+            overflow: hidden;
+            height: 240px;
+            background: #f8f9fa;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image {
+            transform: scale(1.08);
+        }
+        
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(135deg, var(--accent), #ff6b9d);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(254, 44, 85, 0.3);
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-name {
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            color: #2d3748;
+        }
+        
+        .product-description {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .product-price-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .current-price {
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+        
+        .original-price {
+            color: #a0aec0;
+            font-size: 1rem;
+            text-decoration: line-through;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .add-to-cart, .buy-now {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .add-to-cart {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+        
+        .add-to-cart:hover {
+            background: rgba(254, 44, 85, 0.05);
+            transform: translateY(-2px);
+        }
+        
+        .buy-now {
+            background: linear-gradient(135deg, var(--accent), #ff6b9d);
+            color: white;
+            box-shadow: 0 4px 15px rgba(254, 44, 85, 0.3);
+        }
+        
+        .buy-now:hover {
+            background: linear-gradient(135deg, #e0264d, #ff5590);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(254, 44, 85, 0.4);
+        }
+
+        /* ========== FOOTER ========== */
+        footer {
+            margin-top: 80px;
+        }
+        
+        .footer-container {
+            background-color: #000000; 
+            color: #ffffff; 
+            padding: 40px 20px; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: flex-start; 
+            flex-wrap: wrap; 
+            text-align: center;
+        }
+        
+        .footer-logo, .footer-info, .footer-license, .footer-payment {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+            padding: 0 15px;
+        }
+        
+        .footer-logo img {
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        
+        .footer-container h3 {
+            margin: 0 0 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .footer-container p {
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: #a0aec0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .search-box {
+                max-width: 100%;
+                order: 3;
+            }
+            
+            .main-menu ul {
+                gap: 12px;
+            }
+            
+            .main-menu a {
+                font-size: 0.8rem;
+                padding: 6px 8px;
+            }
+            
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .main-image {
+                height: 300px;
+            }
+            
+            .product-title {
+                font-size: 1.6rem;
+            }
+            
+            .current-price {
+                font-size: 1.6rem;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+            }
+            
+            .tab-headers {
+                flex-wrap: wrap;
+            }
+            
+            .tab-header {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html"><img src="Hình/LOGO/LOGO.png" alt="TikTok Trendy Shop"></a>
+            </div>
+            <div class="search-box" role="search">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input class="search-input" type="search" placeholder="Tìm sản phẩm phụ kiện..." id="header-search">
+                <div class="search-results" id="search-results"></div>
+            </div>
+            <div class="header-right">
+                <a href="cart.html" class="cart-btn">
+                    <img class="cart-icon" src="Hình/CART/shopping-cart-304843_1280.webp" alt="Giỏ hàng">
+                    <span class="cart-badge" id="cartCount" style="display:none">0</span>
+                </a>
+                <div id="user-section"></div>
+            </div>
+            <nav class="main-menu">
+                <ul>
+                    <li><a href="index.html">TRANG CHỦ</a></li>
+                    <li><a href="Introduce.html">GIỚI THIỆU</a></li>
+                    <li class="brand-menu">
+                        <a href="store.html">CỬA HÀNG</a>
+                        <ul class="submenu">
+                            <li><a href="phukien.html">Phụ kiện</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="livestream.html">TRANG LIVESTREAM</a></li>
+                    <li><a href="hopthoai.html">HỘP THOẠI</a></li>
+                    <li><a href="thongbao.html">THÔNG BÁO</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb">
+            <a href="index.html">Trang chủ</a> &gt; 
+            <a href="phukien.html">Phụ kiện</a> &gt; 
+            <span id="breadcrumb-product">Móc Khóa Charm</span>
+        </div>
+
+        <!-- Product Detail Section -->
+        <section class="product-detail">
+            <!-- Product Images -->
+            <div class="product-images">
+                <div class="main-image">
+                    <img id="main-product-image" src="./Hình/CUAHANG/mockhoacharm.jpg" alt="Móc Khóa Charm Nhân Vật Anime">
+                </div>
+                <div class="thumbnail-images" id="product-thumbnails">
+                    <!-- Thumbnails sẽ được thêm bằng JavaScript -->
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+                <h1 class="product-title" id="product-title">Móc Khóa Charm Nhân Vật Dễ Thương</h1>
+                
+                <div class="product-price">
+                    <span class="current-price" id="current-price">40.000đ</span>
+                    <span class="original-price" id="original-price">50.000đ</span>
+                    <span class="discount" id="discount">20%</span>
+                </div>
+                
+                <div class="shipping-info">
+                    <p><i class="fas fa-shipping-fast"></i> Miễn phí vận chuyển cho đơn hàng từ 100.000đ</p>
+                </div>
+                
+                <div class="product-options" id="product-options">
+                    <!-- Tùy chọn sản phẩm sẽ được thêm bằng JavaScript -->
+                </div>
+                
+                <div class="quantity-selector">
+                    <div class="quantity-title">Số lượng:</div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" id="decrease-qty">-</button>
+                        <span class="quantity-display" id="quantity">1</span>
+                        <button class="quantity-btn" id="increase-qty">+</button>
+                    </div>
+                    <div class="stock-info" id="stock-info">Còn 50 sản phẩm</div>
+                </div>
+                
+                <div class="product-actions">
+                    <button class="add-to-cart-btn" id="add-to-cart">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
+                    </button>
+                    <button class="buy-now-btn" id="buy-now">
+                        <i class="fas fa-bolt"></i> Mua ngay
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Tabs -->
+        <section class="product-tabs">
+            <div class="tab-headers">
+                <div class="tab-header active" data-tab="description">Mô tả sản phẩm</div>
+                <div class="tab-header" data-tab="specs">Thông số kỹ thuật</div>
+            </div>
+            
+            <div class="tab-content">
+                <div class="tab-panel active" id="description-panel">
+                    <!-- Mô tả sản phẩm sẽ được thêm bằng JavaScript -->
+                </div>
+                
+                <div class="tab-panel" id="specs-panel">
+                    <!-- Thông số kỹ thuật sẽ được thêm bằng JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Related Products -->
+        <section class="related-products">
+            <h2 class="section-title">Sản phẩm liên quan</h2>
+            <div class="products-grid" id="related-products">
+                <!-- Sản phẩm liên quan sẽ được thêm bằng JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <img src="Hình/LOGO/LOGO.png" alt="TikTok Trendy Shop">
+            </div>
+            <div class="footer-info">
+                <h3>THÔNG TIN LIÊN HỆ</h3>
+                <p>TikTok Trendy Shop</p>
+                <p>Địa chỉ: Khu phố 6, phường Linh Trung, TP Thủ Đức, TP Hồ Chí Minh</p>
+                <p>Email: tiktoktrendyshop@gmail.com</p>
+            </div>
+            <div class="footer-license">
+                <h3>HỖ TRỢ KHÁCH HÀNG</h3>
+                <p>Chăm sóc khách hàng</p>
+                <p>Hướng dẫn mua hàng</p>
+                <p>Hỗ trợ đổi trả hàng</p>
+            </div>
+            <div class="footer-payment">
+                <h3>CHÍNH SÁCH</h3>
+                <p>Chính sách đổi hàng</p>
+                <p>Bảo mật thông tin</p>
+                <p>Chính sách giao hàng</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ✅ Chỉ để 1 hàm updateUserSection, dùng đúng id="user-section"
+        function esc(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+        function updateUserSection(){
+            const root = document.getElementById("user-section");
+            const user = JSON.parse(localStorage.getItem("user")) || null;
+            
+            // Sửa ở đây: kiểm tra cả username và fullname
+            const userName = user ? (user.username || user.fullname) : null;
+            
+            if(user && userName){
+                root.innerHTML = `
+                    <span class="user-name">Xin chào, ${esc(userName)}</span>
+                    <button class="logout-btn" id="logoutBtn">Đăng xuất</button>
+                `;
+                document.getElementById("logoutBtn").addEventListener("click", ()=>{
+                    localStorage.removeItem("user");
+                    updateUserSection();
+                    alert("Đã đăng xuất thành công!");
+                });
+            }else{
+                root.innerHTML = `<a href="login.html" class="login-btn">Đăng nhập / Đăng ký</a>`;
+            }
+        }
+
+        // Dữ liệu sản phẩm phụ kiện với thông tin chi tiết khác nhau
+        const accessoryProducts = [
+            {
+                id: "pk1",
+                name: "Móc khóa Ruby Sweet Pink",
+                price: 49000,
+                originalPrice: 60000,
+                images: [
+                    "./Hình/CUAHANG/sp1.jpg",
+                ],
+                category: "mockhoa",
+                options: {
+                    "Màu sắc": ["#FF6B9D", "#4A90E2", "#50E3C2", "#F5A623"]
+                },
+                stock: 50,
+                description: `
+                    <h3>Móc Khóa Ruby Sweet Pink Dễ Thương</h3>
+                    <p>Móc khóa hồng pastel phối hạt chữ "RUBY", nơ và sao nhỏ. Tông màu ngọt ngào, cực hợp với những ai thích phong cách đáng yêu.</p>
+                    <p><strong>Đặc điểm nổi bật:</strong></p>
+                    <ul>
+                        <li>Thiết kế hồng pastel ngọt ngào</li>
+                        <li>Phối hạt chữ "RUBY" tinh tế</li>
+                        <li>Đính kèm nơ và sao nhỏ xinh</li>
+                        <li>Chất liệu nhựa cao cấp, bền đẹp</li>
+                        <li>Hoàn hảo để trang trí túi xách, balo</li>
+                    </ul>
+                    <p><strong>Hướng dẫn sử dụng:</strong></p>
+                    <p>Gắn móc khóa vào túi xách, balo, chìa khóa hoặc bất kỳ vật dụng nào bạn muốn trang trí.</p>
+                `,
+                specs: {
+                    "Chất liệu": "Nhựa cao cấp",
+                    "Kích thước": "4-6cm",
+                    "Trọng lượng": "15-25g",
+                    "Màu sắc": "Hồng pastel",
+                    "Xuất xứ": "Việt Nam"
+                }
+            },
+            {
+                id: "pk2",
+                name: "Móc khóa Em Xinh Rainbow",
+                price: 55000,
+                originalPrice: 70000,
+                images: [
+                    "./Hình/CUAHANG/sp2.jpg",
+                ],
+                category: "mockhoa",
+                options: {
+                    "Màu sắc": ["#FFD700", "#FF69B4", "#9370DB", "#32CD32"]
+                },
+                stock: 45,
+                description: `
+                    <h3>Móc Khóa Em Xinh Rainbow Rực Rỡ</h3>
+                    <p>Móc khóa phối hạt nhiều màu pastel cùng chữ "EM XINH". Tươi tắn, trẻ trung và nổi bật – điểm nhấn nhỏ khiến ngày bạn thêm vui.</p>
+                    <p><strong>Đặc điểm nổi bật:</strong></p>
+                    <ul>
+                        <li>Phối màu rainbow rực rỡ</li>
+                        <li>Chữ "EM XINH" đáng yêu</li>
+                        <li>Thiết kế trẻ trung, năng động</li>
+                        <li>Chất liệu bền đẹp, an toàn</li>
+                        <li>Phù hợp với mọi lứa tuổi</li>
+                    </ul>
+                    <p><strong>Hướng dẫn sử dụng:</strong></p>
+                    <p>Gắn vào túi xách, balo, chìa khóa để trang trí. Lau sạch bằng khăn mềm khi bẩn.</p>
+                `,
+                specs: {
+                    "Chất liệu": "Nhựa cao cấp",
+                    "Kích thước": "5-7cm",
+                    "Trọng lượng": "20-30g",
+                    "Màu sắc": "Rainbow pastel",
+                    "Xuất xứ": "Việt Nam"
+                }
+            },
+            {
+                id: "pk3",
+                name: "Móc khóa Hehe Simple",
+                price: 35000,
+                originalPrice: 45000,
+                images: [
+                    "./Hình/CUAHANG/sp3.jpg",
+                ],
+                category: "mockhoa",
+                options: {
+                    "Màu sắc": ["#FFFFFF", "#000000", "#FF0000"]
+                },
+                stock: 60,
+                description: `
+                    <h3>Móc Khóa Hehe Simple Tối Giản</h3>
+                    <p>Thiết kế tối giản với dây trắng và chữ đỏ "HEHE", nhấn nhá hạt sao nhỏ. Dành cho ai thích phong cách gọn gàng nhưng vẫn có chút playful.</p>
+                    <p><strong>Đặc điểm nổi bật:</strong></p>
+                    <ul>
+                        <li>Thiết kế tối giản, thanh lịch</li>
+                        <li>Chữ "HEHE" màu đỏ nổi bật</li>
+                        <li>Hạt sao nhỏ tinh tế</li>
+                        <li>Dây đeo màu trắng sang trọng</li>
+                        <li>Phù hợp với mọi phong cách</li>
+                    </ul>
+                    <p><strong>Hướng dẫn sử dụng:</strong></p>
+                    <p>Gắn vào túi xách, balo, chìa khóa. Phù hợp với cả nam và nữ.</p>
+                `,
+                specs: {
+                    "Chất liệu": "Nhựa & dây dù",
+                    "Kích thước": "3-5cm",
+                    "Trọng lượng": "10-15g",
+                    "Màu sắc": "Trắng & Đỏ",
+                    "Xuất xứ": "Việt Nam"
+                }
+            },
+            {
+                id: "pk4",
+                name: "Móc khóa Mini Clover",
+                price: 42000,
+                originalPrice: 55000,
+                images: [
+                    "./Hình/CUAHANG/sp4.jpg",
+                ],
+                category: "mockhoa",
+                options: {
+                    "Màu sắc": ["#32CD32", "#98FB98", "#00FF7F"]
+                },
+                stock: 35,
+                description: `
+                    <h3>Móc Khóa Mini Clover May Mắn</h3>
+                    <p>Móc khóa đan tay màu xanh lá nhạt, điểm hạt sao và nơ pastel. Nhỏ xinh, mộc mạc mà vẫn nổi bật. Biểu tượng của sự may mắn và tình yêu.</p>
+                    <p><strong>Đặc điểm nổi bật:</strong></p>
+                    <ul>
+                        <li>Thiết kế cỏ 4 lá may mắn</li>
+                        <li>Màu xanh lá dịu mắt</li>
+                        <li>Đính kèm hạt sao và nơ pastel</li>
+                        <li>Làm thủ công tỉ mỉ</li>
+                        <li>Ý nghĩa phong thủy tốt đẹp</li>
+                    </ul>
+                    <p><strong>Hướng dẫn sử dụng:</strong></p>
+                    <p>Gắn vào túi xách, balo, chìa khóa như một lá bùa may mắn.</p>
+                `,
+                specs: {
+                    "Chất liệu": "Dây đan & nhựa",
+                    "Kích thước": "4-6cm",
+                    "Trọng lượng": "12-18g",
+                    "Màu sắc": "Xanh lá pastel",
+                    "Xuất xứ": "Việt Nam"
+                }
+            },
+            {
+                id: "pk5",
+                name: "Móc khóa Minty Star",
+                price: 38000,
+                originalPrice: 50000,
+                images: [
+                    "./Hình/CUAHANG/sp5.jpg",
+                ],
+                category: "mockhoa",
+                options: {
+                    "Màu sắc": ["#98FB98", "#87CEEB", "#FFFFFF"],
+                },
+                stock: 40,
+                description: `
+                    <h3>Móc Khóa Minty Star Tươi Mát</h3>
+                    <p>Móc khóa macrame xanh mint – trắng, trang trí hạt sao hai đầu. Cảm giác tươi mát, dễ phối với túi hoặc chìa khóa. Mang lại năng lượng tích cực.</p>
+                    <p><strong>Đặc điểm nổi bật:</strong></p>
+                    <ul>
+                        <li>Màu xanh mint tươi mát</li>
+                        <li>Thiết kế macrame độc đáo</li>
+                        <li>Hạt sao lấp lánh hai đầu</li>
+                        <li>Kết hợp màu trắng thanh lịch</li>
+                        <li>Phù hợp với phong cách tối giản</li>
+                    </ul>
+                    <p><strong>Hướng dẫn sử dụng:</strong></p>
+                    <p>Gắn vào túi xách, balo, chìa khóa. Tránh tiếp xúc với nước.</p>
+                `,
+                specs: {
+                    "Chất liệu": "Dây macrame & kim loại",
+                    "Kích thước": "6-8cm",
+                    "Trọng lượng": "15-22g",
+                    "Màu sắc": "Xanh mint & Trắng",
+                    "Xuất xứ": "Việt Nam"
+                }
+            },
+            {
+                id: "pk6",
+                name: "Móc khóa Flower Duo",
+                price: 65000,
+                originalPrice: 80000,
+                images: [
+                    "./Hình/CUAHANG/sp6.jpg",
+                ],
+                category: "mockhoa",
+                options: {
+                    "Màu sắc": ["#87CEEB", "#FFFFFF", "#FFB6C1"],
+                },
+                stock: 25,
+                description: `
+                    <h3>Móc Khóa Flower Duo Lãng Mạn</h3>
+                    <p>Set đôi hoa đan tay xanh – trắng, tạo hình mềm mại như cánh hoa thật. Dễ thương và tinh tế, thích hợp làm quà tặng handmade cho người thân yêu.</p>
+                    <p><strong>Đặc điểm nổi bật:</strong></p>
+                    <ul>
+                        <li>Set đôi hoa phối màu</li>
+                        <li>Thiết kế cánh hoa mềm mại</li>
+                        <li>Làm thủ công tinh xảo</li>
+                        <li>Màu xanh - trắng hài hòa</li>
+                        <li>Hoàn hảo làm quà tặng</li>
+                    </ul>
+                    <p><strong>Hướng dẫn sử dụng:</strong></p>
+                    <p>Gắn vào túi xách, balo, chìa khóa. Có thể tặng riêng hoặc theo cặp.</p>
+                `,
+                specs: {
+                    "Chất liệu": "Dây đan & vải",
+                    "Kích thước": "5-7cm/bông",
+                    "Trọng lượng": "25-35g/set",
+                    "Màu sắc": "Xanh & Trắng",
+                    "Xuất xứ": "Việt Nam"
+                }
+            }
+        ];
+
+        // Lấy ID sản phẩm từ URL
+        function getProductIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+
+        // Hiển thị chi tiết sản phẩm
+        function loadProductDetail() {
+            const productId = getProductIdFromURL();
+            let product;
+            
+            if (productId) {
+                // Nếu có ID từ URL, tìm sản phẩm theo ID
+                product = accessoryProducts.find(p => p.id === productId);
+            } else {
+                // Nếu không có ID, lấy sản phẩm đầu tiên làm mặc định (để test)
+                product = accessoryProducts[0];
+            }
+            
+            if (!product) {
+                // Nếu không tìm thấy sản phẩm, chuyển hướng về trang phụ kiện
+                window.location.href = "phukien.html";
+                return;
+            }
+            
+            // Cập nhật thông tin sản phẩm
+            document.getElementById("product-title").textContent = product.name;
+            document.getElementById("current-price").textContent = product.price.toLocaleString('vi-VN') + "đ";
+            document.getElementById("breadcrumb-product").textContent = product.name;
+            document.getElementById("stock-info").textContent = `Còn ${product.stock} sản phẩm`;
+            
+            // Hiển thị giá gốc và phần trăm giảm giá nếu có
+            const originalPriceEl = document.getElementById('original-price');
+            const discountEl = document.getElementById('discount');
+            if (product.originalPrice && product.originalPrice > product.price) {
+                originalPriceEl.textContent = product.originalPrice.toLocaleString('vi-VN') + "đ";
+                const discountPercent = Math.round((1 - product.price / product.originalPrice) * 100);
+                discountEl.textContent = `-${discountPercent}%`;
+            } else {
+                originalPriceEl.style.display = 'none';
+                discountEl.style.display = 'none';
+            }
+            
+            // Cập nhật ảnh sản phẩm
+            document.getElementById("main-product-image").src = product.images[0];
+            
+            // Tạo thumbnails
+            const thumbnailsContainer = document.getElementById("product-thumbnails");
+            thumbnailsContainer.innerHTML = '';
+            
+            product.images.forEach((image, index) => {
+                const thumbnail = document.createElement("div");
+                thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+                thumbnail.setAttribute("data-image", image);
+                thumbnail.innerHTML = `<img src="${image}" alt="${product.name} ${index + 1}">`;
+                thumbnailsContainer.appendChild(thumbnail);
+            });
+            
+            // Tạo tùy chọn sản phẩm
+            const optionsContainer = document.getElementById("product-options");
+            optionsContainer.innerHTML = '';
+            
+            for (const [optionName, optionValues] of Object.entries(product.options)) {
+                const optionGroup = document.createElement("div");
+                optionGroup.className = "option-group";
+                
+                const optionTitle = document.createElement("div");
+                optionTitle.className = "option-title";
+                optionTitle.textContent = optionName + ":";
+                optionGroup.appendChild(optionTitle);
+                
+                if (optionName === "Màu sắc") {
+                    // Tạo tùy chọn màu sắc
+                    const colorOptions = document.createElement("div");
+                    colorOptions.className = "color-options";
+                    
+                    optionValues.forEach((color, index) => {
+                        const colorOption = document.createElement("div");
+                        colorOption.className = `color-option ${index === 0 ? 'active' : ''}`;
+                        colorOption.setAttribute("data-value", color);
+                        colorOption.style.backgroundColor = color;
+                        colorOptions.appendChild(colorOption);
+                    });
+                    
+                    optionGroup.appendChild(colorOptions);
+                } else {
+                    // Tạo tùy chọn thông thường
+                    optionValues.forEach((value, index) => {
+                        const optionItem = document.createElement("div");
+                        optionItem.className = `option-item ${index === 0 ? 'active' : ''}`;
+                        optionItem.setAttribute("data-value", value);
+                        optionItem.textContent = value;
+                        optionGroup.appendChild(optionItem);
+                    });
+                }
+                
+                optionsContainer.appendChild(optionGroup);
+            }
+            
+            // Cập nhật mô tả sản phẩm
+            document.getElementById("description-panel").innerHTML = product.description;
+            
+            // Cập nhật thông số kỹ thuật
+            const specsPanel = document.getElementById("specs-panel");
+            let specsHTML = '<table class="specs-table">';
+            for (const [key, value] of Object.entries(product.specs)) {
+                specsHTML += `
+                    <tr>
+                        <td>${key}</td>
+                        <td>${value}</td>
+                    </tr>
+                `;
+            }
+            specsHTML += '</table>';
+            specsPanel.innerHTML = specsHTML;
+            
+            return product;
+        }
+
+        // Hiển thị sản phẩm liên quan
+        function loadRelatedProducts() {
+            const productId = getProductIdFromURL();
+            const currentProduct = accessoryProducts.find(p => p.id === productId) || accessoryProducts[0];
+            const relatedProductsGrid = document.getElementById("related-products");
+            
+            if (!currentProduct) return;
+            
+            // Lọc sản phẩm cùng danh mục, loại trừ sản phẩm hiện tại
+            const related = accessoryProducts.filter(p => 
+                p.category === currentProduct.category && p.id !== currentProduct.id
+            ).slice(0, 4); // Lấy tối đa 4 sản phẩm
+            
+            if (related.length === 0) {
+                // Nếu không có sản phẩm cùng danh mục, hiển thị sản phẩm ngẫu nhiên
+                const randomProducts = accessoryProducts
+                    .filter(p => p.id !== currentProduct.id)
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 4);
+                
+                displayProducts(randomProducts, relatedProductsGrid);
+            } else {
+                displayProducts(related, relatedProductsGrid);
+            }
+        }
+        
+        function displayProducts(products, container) {
+            container.innerHTML = "";
+            
+            products.forEach(product => {
+                const discountPercentage = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+                
+                const productCard = document.createElement("div");
+                productCard.className = "product-card";
+                productCard.setAttribute("data-category", product.category);
+                productCard.innerHTML = `
+                    <a href="chitietsp.html?id=${product.id}">
+                        <div class="product-image-container">
+                            <img src="${product.images[0]}" alt="${product.name}" class="product-image">
+                            <div class="product-badge">-${discountPercentage}%</div>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-description">${product.description.substring(0, 100)}...</div>
+                            <div class="product-price-container">
+                                <span class="current-price">${product.price.toLocaleString('vi-VN')}₫</span>
+                                <span class="original-price">${product.originalPrice.toLocaleString('vi-VN')}₫</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="add-to-cart" data-id="${product.id}">
+                                    <i class="fas fa-shopping-cart"></i> Thêm giỏ hàng
+                                </button>
+                                <button class="buy-now" data-id="${product.id}">
+                                    <i class="fas fa-bolt"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                container.appendChild(productCard);
+            });
+
+            // Xử lý sự kiện thêm vào giỏ hàng
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productId = this.getAttribute('data-id');
+                    addToCart(productId);
+                });
+            });
+
+            // Xử lý sự kiện mua ngay
+            document.querySelectorAll('.buy-now').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productId = this.getAttribute('data-id');
+                    buyNow(productId);
+                });
+            });
+        }
+
+        function addToCart(productId) {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user) {
+                alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const product = accessoryProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            
+            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+            const existingItemIndex = cart.findIndex(item => 
+                item.id === product.id && item.username === user.fullname
+            );
+
+            if (existingItemIndex !== -1) {
+                // Nếu sản phẩm đã tồn tại, tăng số lượng lên 1
+                cart[existingItemIndex].quantity = (cart[existingItemIndex].quantity || 1) + 1;
+            } else {
+                // Nếu sản phẩm chưa tồn tại, thêm mới với quantity = 1
+                cart.push({
+                    ...product,
+                    quantity: 1,
+                    username: user.fullname
+                });
+            }
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartCount();
+            
+            // Hiển thị thông báo thành công
+            const toast = document.createElement("div");
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, var(--accent), #ff6b9d);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+                z-index: 10000;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            `;
+            toast.innerHTML = `<i class="fas fa-check-circle"></i> Đã thêm vào giỏ hàng!`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 3000);
+        }
+
+        function buyNow(productId) {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (!user) {
+                alert("Vui lòng đăng nhập để mua hàng!");
+                window.location.href = "login.html";
+                return;
+            }
+
+            const product = accessoryProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            // Lưu thông tin sản phẩm mua ngay
+            localStorage.setItem("buyNow", JSON.stringify({
+                ...product,
+                quantity: 1,
+                username: user.fullname
+            }));
+
+            // Chuyển hướng đến trang thanh toán
+            window.location.href = "checkout.html";
+        }
+
+        function updateCartCount() {
+            const user = JSON.parse(localStorage.getItem("user"));
+            const cartCount = document.getElementById("cartCount");
+            
+            if (user) {
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                // Chỉ tính sản phẩm của user hiện tại
+                const userCart = cart.filter(item => item.username === user.fullname);
+                
+                // Tính tổng số lượng sản phẩm (quantity)
+                const totalItems = userCart.reduce((sum, item) => sum + (parseInt(item.quantity) || 1), 0);
+                
+                if (totalItems > 0) {
+                    cartCount.textContent = totalItems;
+                    cartCount.style.display = "flex";
+                } else {
+                    cartCount.style.display = "none";
+                }
+            } else {
+                cartCount.style.display = "none";
+            }
+        }
+
+        // Tìm kiếm header
+        function initHeaderSearch() {
+            const headerSearch = document.getElementById('header-search');
+            const searchResults = document.getElementById('search-results');
+
+            // Dữ liệu sản phẩm mẫu cho tìm kiếm
+            const allProducts = accessoryProducts.map(product => ({
+                name: product.name,
+                price: product.price,
+                category: "phukien",
+                url: `chitietsp.html?id=${product.id}`
+            }));
+
+            headerSearch.addEventListener('input', function() {
+                const searchTerm = this.value.trim().toLowerCase();
+                searchResults.innerHTML = '';
+                
+                if (searchTerm.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+
+                const filtered = allProducts.filter(product => 
+                    product.name.toLowerCase().includes(searchTerm)
+                );
+
+                if (filtered.length === 0) {
+                    searchResults.innerHTML = '<div class="search-result-item">Không tìm thấy sản phẩm</div>';
+                } else {
+                    filtered.forEach(product => {
+                        const item = document.createElement('div');
+                        item.className = 'search-result-item';
+                        item.innerHTML = `
+                            <div style="font-weight: 600;">${product.name}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">${product.price.toLocaleString('vi-VN')}₫ • ${product.category}</div>
+                        `;
+                        item.addEventListener('click', function() {
+                            window.location.href = product.url;
+                        });
+                        searchResults.appendChild(item);
+                    });
+                }
+                
+                searchResults.style.display = 'block';
+            });
+
+            // Ẩn kết quả tìm kiếm khi click ra ngoài
+            document.addEventListener('click', function(e) {
+                if (!headerSearch.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+
+            // Enter để tìm kiếm
+            headerSearch.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const searchTerm = this.value.trim();
+                    if (searchTerm) {
+                        window.location.href = `store.html?search=${encodeURIComponent(searchTerm)}`;
+                    }
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateUserSection();
+            updateCartCount();
+            initHeaderSearch();
+            const currentProduct = loadProductDetail();
+            loadRelatedProducts();
+            
+            // Xử lý thay đổi ảnh thumbnail
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.addEventListener('click', function() {
+                    const imageSrc = this.getAttribute('data-image');
+                    document.getElementById('main-product-image').src = imageSrc;
+                    
+                    // Cập nhật trạng thái active
+                    document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Xử lý chọn tùy chọn sản phẩm
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const group = this.parentElement;
+                    group.querySelectorAll('.option-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Xử lý chọn màu sắc
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const group = this.parentElement;
+                    group.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Xử lý tăng/giảm số lượng
+            document.getElementById('increase-qty').addEventListener('click', function() {
+                const quantityElement = document.getElementById('quantity');
+                let quantity = parseInt(quantityElement.textContent);
+                if (quantity < currentProduct.stock) {
+                    quantityElement.textContent = quantity + 1;
+                }
+            });
+            
+            document.getElementById('decrease-qty').addEventListener('click', function() {
+                const quantityElement = document.getElementById('quantity');
+                let quantity = parseInt(quantityElement.textContent);
+                if (quantity > 1) {
+                    quantityElement.textContent = quantity - 1;
+                }
+            });
+            
+            // Xử lý tab
+            document.querySelectorAll('.tab-header').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Cập nhật tab active
+                    document.querySelectorAll('.tab-header').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Hiển thị nội dung tab tương ứng
+                    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+                    document.getElementById(`${tabId}-panel`).classList.add('active');
+                });
+            });
+            
+            // Xử lý thêm vào giỏ hàng
+            document.getElementById('add-to-cart').addEventListener('click', function() {
+                const productId = getProductIdFromURL() || "pk1";
+                const quantity = parseInt(document.getElementById('quantity').textContent);
+                
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (!user) {
+                    alert("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                const product = accessoryProducts.find(p => p.id === productId);
+                if (!product) return;
+
+                const cart = JSON.parse(localStorage.getItem("cart")) || [];
+                
+                // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+                const existingItemIndex = cart.findIndex(item => 
+                    item.id === product.id && item.username === user.fullname
+                );
+
+                if (existingItemIndex !== -1) {
+                    // Nếu sản phẩm đã tồn tại, tăng số lượng
+                    cart[existingItemIndex].quantity = (cart[existingItemIndex].quantity || 1) + quantity;
+                } else {
+                    // Nếu sản phẩm chưa tồn tại, thêm mới
+                    cart.push({
+                        ...product,
+                        quantity: quantity,
+                        username: user.fullname
+                    });
+                }
+
+                localStorage.setItem("cart", JSON.stringify(cart));
+                updateCartCount();
+                
+                // Hiển thị thông báo thành công
+                const toast = document.createElement("div");
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, var(--accent), #ff6b9d);
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                `;
+                toast.innerHTML = `<i class="fas fa-check-circle"></i> Đã thêm ${quantity} sản phẩm vào giỏ hàng!`;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 3000);
+            });
+            
+            // Xử lý mua ngay
+            document.getElementById('buy-now').addEventListener('click', function() {
+                const productId = getProductIdFromURL() || "pk1";
+                const quantity = parseInt(document.getElementById('quantity').textContent);
+                
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (!user) {
+                    alert("Vui lòng đăng nhập để mua hàng!");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                const product = accessoryProducts.find(p => p.id === productId);
+                if (!product) return;
+
+                // Lưu thông tin sản phẩm mua ngay
+                localStorage.setItem("buyNow", JSON.stringify({
+                    ...product,
+                    quantity: quantity,
+                    username: user.fullname
+                }));
+
+                // Chuyển hướng đến trang thanh toán
+                window.location.href = "checkout.html";
+            });
+        });
+
+        window.addEventListener("storage", (e) => { 
+            if (e.key === "user") updateUserSection(); 
+            if (e.key === "cart") updateCartCount();
+        });
+    </script>
+</body>
+</html>
