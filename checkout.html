@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Thanh toán - TinyTags</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Thêm EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <style>
     :root {
       --max-w: 1200px; --bg-body: #121212; --bg-card: #242424; --bg-card-hover: #2c2c2c;
@@ -773,8 +775,6 @@
         <div class="payment-options">
             <div class="payment-option active" data-payment="cod">Thanh toán khi nhận hàng</div>
             <div class="payment-option" data-payment="momo">Ví MoMo</div>
-            <div class="payment-option" data-payment="vnpay">Ví VNPay</div>
-            <div class="payment-option" data-payment="bank">Thẻ Tín dụng/Ghi nợ</div>
             <div class="payment-option" data-payment="transfer">Chuyển khoản ngân hàng</div>
         </div>
         
@@ -812,91 +812,6 @@
                 <div class="form-group">
                     <label for="momo-transaction-id">Mã giao dịch MoMo (tùy chọn)</label>
                     <input type="text" id="momo-transaction-id" placeholder="Nhập mã giao dịch từ MoMo (nếu có)">
-                </div>
-            </div>
-        </div>
-        
-        <!-- VNPay Payment Details - ĐÃ CẢI TIẾN -->
-        <div class="payment-details" id="vnpay-details">
-            <div class="payment-form">
-                <div class="order-info">
-                    <p class="order-id">Mã đơn hàng: <span id="vnpay-order-id">TT12345678</span></p>
-                    <p><strong>Hướng dẫn thanh toán:</strong></p>
-                    <p>1. Mở ứng dụng VNPay trên điện thoại</p>
-                    <p>2. Chọn "Thanh toán QR Code"</p>
-                    <p>3. Quét mã QR bên dưới để thanh toán</p>
-                    <p>4. Hoặc chuyển khoản đến: <strong>101876543210</strong></p>
-                    <p>5. Ghi nội dung: <strong id="vnpay-content">TT12345678</strong></p>
-                </div>
-                
-                <div class="form-group">
-                    <label>QR Code thanh toán VNPay:</label>
-                    <div class="qr-section">
-                        <div class="qr-code">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=VNPAY%7C101876543210%7C500000%7CTT12345678" alt="QR Code VNPay" id="vnpay-qr-img">
-                            <div class="caption">Quét QR code bằng VNPay</div>
-                        </div>
-                        <div class="bank-info">
-                            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 6px;">
-                                <p><strong>Số tài khoản VNPay:</strong> 101876543210 </p>
-                                <p><strong>Chủ tài khoản:</strong> TINYTAGS </p>
-                                <p><strong>Ngân hàng:</strong> NCB </p>
-                                <p><strong>Số tiền:</strong> <span id="vnpay-amount">0₫</span></p>
-                                <p><strong>Nội dung chuyển tiền:</strong> <span id="vnpay-transfer-content">TT12345678</span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="vnpay-transaction-id">Mã giao dịch VNPay (tùy chọn)</label>
-                    <input type="text" id="vnpay-transaction-id" placeholder="Nhập mã giao dịch từ VNPay (nếu có)">
-                </div>
-            </div>
-        </div>
-        
-        <!-- Bank Payment Details - ĐÃ CẢI TIẾN -->
-        <div class="payment-details" id="bank-details">
-            <div class="payment-form">
-                <div class="order-info">
-                    <p class="order-id">Mã đơn hàng: <span id="bank-order-id">TT12345678</span></p>
-                    <p><strong>Thông tin thanh toán thẻ:</strong></p>
-                </div>
-                
-                <div class="form-group">
-                    <label for="card-number">Số thẻ</label>
-                    <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="card-expiry">Ngày hết hạn</label>
-                        <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5">
-                    </div>
-                    <div class="form-group">
-                        <label for="card-cvv">CVV</label>
-                        <input type="text" id="card-cvv" placeholder="123" maxlength="3">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="card-name">Tên chủ thẻ</label>
-                    <input type="text" id="card-name" placeholder="NGUYEN VAN A">
-                </div>
-                <div class="form-group">
-                    <label for="card-bank">Ngân hàng</label>
-                    <select id="card-bank">
-                        <option value="">Chọn ngân hàng</option>
-                        <option value="VCB">Vietcombank</option>
-                        <option value="BIDV">BIDV</option>
-                        <option value="AGB">Agribank</option>
-                        <option value="TCB">Techcombank</option>
-                        <option value="MB">MB Bank</option>
-                        <option value="ACB">ACB</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="card-transaction-id">Mã giao dịch (tùy chọn)</label>
-                    <input type="text" id="card-transaction-id" placeholder="Nhập mã giao dịch từ ngân hàng (nếu có)">
                 </div>
             </div>
         </div>
@@ -1182,6 +1097,75 @@
   }
 
   // =============================================
+  // HÀM GỬI EMAIL BẰNG EMAILJS - DÙNG TEMPLATE CONTACT US
+  // =============================================
+  function sendOrderEmail(orderData) {
+    return new Promise((resolve, reject) => {
+        // KHỞI TẠO EMAILJS - THAY BẰNG THÔNG TIN CỦA BẠN
+        emailjs.init("ZXcbzZHr1RNokgDw2"); // 👈 Thay bằng Public Key của bạn
+        
+        // Tạo nội dung đơn hàng dạng text đơn giản
+        const orderDetails = `
+🛍️ TINYTAGS - ĐƠN HÀNG MỚI
+
+📋 THÔNG TIN KHÁCH HÀNG
+👤 Họ tên: ${orderData.customerInfo.name}
+📞 SĐT: ${orderData.customerInfo.phone}
+📧 Email: ${orderData.customerInfo.email || 'Không có'}
+📍 Địa chỉ: ${orderData.customerInfo.address}
+
+💳 THÔNG TIN THANH TOÁN
+Phương thức: ${getPaymentMethodName(orderData.payment.method)}
+Mã giao dịch: ${orderData.payment.transactionId || 'Không có'}
+
+🛒 CHI TIẾT ĐƠN HÀNG
+${orderData.items.map(item => 
+    `• ${item.name} (${item.size}) - ${item.quantity} x ${item.price.toLocaleString('vi-VN')}₫ = ${(item.quantity * item.price).toLocaleString('vi-VN')}₫`
+).join('\n')}
+
+💰 TỔNG HÓA ĐƠN
+Tiền sản phẩm: ${orderData.orderSummary.subtotal.toLocaleString('vi-VN')}₫
+Phí vận chuyển: ${orderData.orderSummary.shippingFee.toLocaleString('vi-VN')}₫
+${orderData.orderSummary.discount > 0 ? `Giảm giá voucher: -${orderData.orderSummary.discount.toLocaleString('vi-VN')}₫` : ''}
+${orderData.orderSummary.shippingDiscount > 0 ? `Giảm giá vận chuyển: -${orderData.orderSummary.shippingDiscount.toLocaleString('vi-VN')}₫` : ''}
+💎 TỔNG CỘNG: ${orderData.orderSummary.total.toLocaleString('vi-VN')}₫
+
+${orderData.vouchers.length > 0 ? `🎫 VOUCHER: ${orderData.vouchers.map(v => v.code).join(', ')}` : ''}
+${orderData.notes ? `📝 GHI CHÚ: ${orderData.notes}` : ''}
+
+⏰ Thời gian: ${new Date().toLocaleString('vi-VN')}
+        `.trim();
+
+        // Gửi email - DÙNG TEMPLATE "CONTACT US"
+        emailjs.send("service_tinytags", "template_vlprarg", {
+            // Template "Contact Us" cần các biến này:
+            from_name: "TinyTags Website",
+            message: orderDetails,
+            reply_to: orderData.customerInfo.email || "tinytags.store@gmail.com",
+            // Thêm subject tùy chỉnh
+            subject: `🛍️ ĐƠN HÀNG MỚI: ${orderData.orderId} - ${orderData.customerInfo.name}`
+        })
+        .then(function(response) {
+            console.log('✅ Email gửi thành công:', response);
+            resolve(true);
+        }, function(error) {
+            console.error('❌ Lỗi gửi email:', error);
+            reject(error);
+        });
+    });
+  }
+
+  // Hàm chuyển đổi tên phương thức thanh toán
+  function getPaymentMethodName(method) {
+    const methods = {
+        'cod': 'Thanh toán khi nhận hàng',
+        'momo': 'Ví MoMo', 
+        'transfer': 'Chuyển khoản ngân hàng'
+    };
+    return methods[method] || method;
+  }
+
+  // =============================================
   // HÀM LƯU ĐƠN HÀNG VÀO ADMIN - ĐÃ SỬA LẠI
   // =============================================
   function saveOrderToAdmin(orderData) {
@@ -1359,8 +1343,6 @@
     // Cập nhật preview order ID
     previewOrderIdEl.textContent = currentOrderId;
     document.getElementById('momo-order-id').textContent = currentOrderId;
-    document.getElementById('vnpay-order-id').textContent = currentOrderId;
-    document.getElementById('bank-order-id').textContent = currentOrderId;
 
     // Hiển thị voucher đã áp dụng
     function displayAppliedVouchers() {
@@ -1681,11 +1663,6 @@
       document.getElementById('momo-transfer-content').textContent = currentOrderId;
       document.getElementById('momo-content').textContent = currentOrderId;
       
-      // Cập nhật VNPay
-      document.getElementById('vnpay-amount').textContent = `${amount.toLocaleString('vi-VN')}₫`;
-      document.getElementById('vnpay-transfer-content').textContent = currentOrderId;
-      document.getElementById('vnpay-content').textContent = currentOrderId;
-      
       // Cập nhật chuyển khoản
       document.getElementById('transfer-amount').textContent = `${amount.toLocaleString('vi-VN')}₫`;
     }
@@ -1736,8 +1713,6 @@
     // Xử lý phương thức thanh toán
     const paymentOptions = document.querySelectorAll('.payment-option');
     const momoDetails = document.getElementById('momo-details');
-    const vnpayDetails = document.getElementById('vnpay-details');
-    const bankDetails = document.getElementById('bank-details');
     const transferDetails = document.getElementById('transfer-details');
     
     paymentOptions.forEach(option => {
@@ -1746,17 +1721,11 @@
             option.classList.add('active');
             
             momoDetails.classList.remove('active');
-            vnpayDetails.classList.remove('active');
-            bankDetails.classList.remove('active');
             transferDetails.classList.remove('active');
             
             const paymentMethod = option.getAttribute('data-payment');
             if (paymentMethod === 'momo') {
                 momoDetails.classList.add('active');
-            } else if (paymentMethod === 'vnpay') {
-                vnpayDetails.classList.add('active');
-            } else if (paymentMethod === 'bank') {
-                bankDetails.classList.add('active');
             } else if (paymentMethod === 'transfer') {
                 transferDetails.classList.add('active');
             }
@@ -1862,12 +1831,6 @@
             case 'momo':
                 transactionId = document.getElementById('momo-transaction-id')?.value || '';
                 break;
-            case 'vnpay':
-                transactionId = document.getElementById('vnpay-transaction-id')?.value || '';
-                break;
-            case 'bank':
-                transactionId = document.getElementById('card-transaction-id')?.value || '';
-                break;
             case 'transfer':
                 transactionId = document.getElementById('transfer-transaction-id')?.value || '';
                 break;
@@ -1952,6 +1915,15 @@
       try {
           // Tạo đơn hàng
           const orderData = createOrderData();
+          
+          // GỬI EMAIL BẰNG EMAILJS
+          try {
+            await sendOrderEmail(orderData);
+            showToast('Đã gửi thông tin đơn hàng đến email của bạn!');
+          } catch (emailError) {
+            console.warn('Không thể gửi email, nhưng vẫn tiếp tục xử lý đơn hàng:', emailError);
+            showToast('Đơn hàng đã được tạo nhưng không thể gửi email xác nhận', 'error');
+          }
           
           // LƯU ĐƠN HÀNG VÀO ADMIN
           const saveAdminResult = saveOrderToAdmin(orderData);
@@ -2117,272 +2089,6 @@
   });
 </script>
 
-<script type="module">
-  // ✅ IMPORT FIRESTORE
-  import { 
-    db, 
-    ref, 
-    set
-  } from './firebaseConfig.js';
-
-  // =============================================
-  // HÀM LƯU ĐƠN HÀNG LÊN FIREBASE - MỚI THÊM
-  // =============================================
-  async function saveOrderToFirebase(orderData) {
-    try {
-        console.log('🔥 Bắt đầu lưu đơn hàng lên Firebase...');
-        
-        // Tạo reference đến node orders
-        const orderRef = ref(db, 'orders/' + orderData.orderId);
-        
-        // Lưu đơn hàng lên Firebase
-        await set(orderRef, orderData);
-        
-        console.log('✅ Đã lưu đơn hàng lên Firebase thành công!');
-        console.log('📋 Order ID:', orderData.orderId);
-        
-        return true;
-    } catch (error) {
-        console.error('❌ Lỗi khi lưu đơn hàng lên Firebase:', error);
-        return false;
-    }
-  }
-
-  // =============================================
-  // SỬA HÀM XỬ LÝ THANH TOÁN - THÊM FIREBASE
-  // =============================================
-  document.addEventListener("DOMContentLoaded", function() {
-    // Lấy nút đặt hàng
-    const placeOrderBtn = document.getElementById("place-order-btn");
-    
-    if (placeOrderBtn) {
-      // Lưu lại hàm xử lý click gốc
-      const originalClickHandler = placeOrderBtn.onclick;
-      
-      // Thay thế bằng hàm mới có Firebase
-      placeOrderBtn.onclick = async function() {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (!user) { 
-          showToast("Vui lòng đăng nhập để đặt hàng!", 'error');
-          setTimeout(() => window.location.href = "login.html", 1500);
-          return; 
-        }
-
-        // Kiểm tra có sản phẩm không
-        const buyNowItem = JSON.parse(localStorage.getItem("buyNow"));
-        const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
-        const checkoutFromCart = localStorage.getItem("checkoutFromCart") === "true";
-        const username = user.fullname || user.username;
-        
-        let items = [];
-        if (buyNowItem) {
-          items = [buyNowItem];
-        } else if (checkoutFromCart) {
-          items = cartItems.filter(item => 
-            item.username === username || item.username === user.fullname || item.username === user.username
-          );
-        }
-        
-        if (items.length === 0) {
-          showToast("Vui lòng chọn sản phẩm để thanh toán!", 'error');
-          return;
-        }
-
-        // Kiểm tra thông tin địa chỉ
-        const savedAddress = JSON.parse(localStorage.getItem("userAddress")) || {};
-        if (!savedAddress.fullname || !savedAddress.phone || !savedAddress.address) {
-          showToast("Vui lòng cập nhật đầy đủ thông tin địa chỉ!", 'error');
-          document.getElementById('change-address-btn').click();
-          return;
-        }
-
-        // Hiển thị loading
-        const originalText = this.innerHTML;
-        this.innerHTML = '<div class="loading"></div> Đang xử lý...';
-        this.disabled = true;
-
-        try {
-            // Tạo đơn hàng (sử dụng hàm createOrderData có sẵn trong code của bạn)
-            const orderData = window.createOrderData ? window.createOrderData() : createFallbackOrderData();
-            
-            // 🔥 QUAN TRỌNG: LƯU ĐƠN HÀNG LÊN FIREBASE
-            const firebaseResult = await saveOrderToFirebase(orderData);
-            
-            if (firebaseResult) {
-                // Gọi hàm xử lý gốc để tiếp tục lưu localStorage
-                if (originalClickHandler) {
-                  await originalClickHandler();
-                } else {
-                  // Fallback: thực hiện lưu localStorage
-                  saveOrderToAdmin(orderData);
-                  saveOrderToUser(orderData, username);
-                  
-                  // Xóa sản phẩm đã thanh toán khỏi giỏ hàng
-                  if (checkoutFromCart) {
-                    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-                    const username = user.fullname || user.username;
-                    cart = cart.filter(item => 
-                      !(item.username === username || item.username === user.fullname || item.username === user.username)
-                    );
-                    localStorage.setItem("cart", JSON.stringify(cart));
-                    localStorage.removeItem("checkoutFromCart");
-                  } else {
-                    localStorage.removeItem("buyNow");
-                  }
-                  
-                  showToast(`Đặt hàng thành công! Mã đơn hàng: ${orderData.orderId}`);
-                  
-                  // Reset button
-                  this.innerHTML = originalText;
-                  this.disabled = false;
-                  
-                  // Chuyển hướng sau 2 giây
-                  setTimeout(() => {
-                    window.location.href = "order-success.html?orderId=" + orderData.orderId;
-                  }, 2000);
-                }
-            } else {
-                throw new Error('Lỗi lưu đơn hàng lên Firebase');
-            }
-            
-        } catch (error) {
-            console.error('Lỗi khi đặt hàng:', error);
-            showToast('Có lỗi xảy ra khi đặt hàng! Vui lòng thử lại.', 'error');
-            this.innerHTML = originalText;
-            this.disabled = false;
-        }
-      };
-    }
-  });
-
-  // Hàm dự phòng tạo order data nếu không có hàm gốc
-  function createFallbackOrderData() {
-    const user = JSON.parse(localStorage.getItem("user")) || {};
-    const savedAddress = JSON.parse(localStorage.getItem("userAddress")) || {};
-    
-    return {
-      orderId: generateOrderId(),
-      customerName: savedAddress.fullname || user.fullname || 'Khách hàng',
-      customerPhone: savedAddress.phone || user.phone || '',
-      customerAddress: savedAddress.address || user.address || '',
-      customerEmail: user.email || '',
-      items: [],
-      paymentMethod: 'cod',
-      paymentStatus: 'pending',
-      subtotal: 0,
-      shippingFee: 30000,
-      discount: 0,
-      shippingDiscount: 0,
-      total: 0,
-      vouchers: [],
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      timestamp: Date.now()
-    };
-  }
-
-  // Hàm tạo mã đơn hàng
-  function generateOrderId() {
-    const timestamp = Date.now().toString();
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-    return 'TT' + timestamp.slice(-8) + random;
-  }
-
-  console.log('✅ Firebase order module loaded successfully!');
-</script>
-
-<!-- Firebase helpers -->
-<script type="module">
-  // Firebase app already expected in js/firebase-config.js (exports: db, auth, storage)
-  import { db, auth, storage } from "./js/firebase-config.js";
-  import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, doc, updateDoc, where, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-  import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
-  // helper functions used by injected code
-  window._firebase_helpers = {
-    addOrder: async (order) => {
-      return await addDoc(collection(db, "orders"), { ...order, status: "pending", createdAt: serverTimestamp() });
-    },
-    sendChatMessage: async (userId, message) => {
-      // message: { text, sender, imageUrl? }
-      const chatCol = collection(db, "chats", userId, "messages");
-      return await addDoc(chatCol, { ...message, createdAt: serverTimestamp() });
-    },
-    uploadImageAndGetUrl: async (file, pathPrefix="chat_images") => {
-      const p = `${pathPrefix}/${Date.now()}_${file.name}`;
-      const sRef = storageRef(storage, p);
-      const snap = await uploadBytes(sRef, file);
-      const url = await getDownloadURL(snap.ref);
-      return url;
-    },
-    listenOrders: (onUpdate) => {
-      const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
-      return onSnapshot(q, onUpdate);
-    },
-    listenUserChatsList: (onUpdate) => {
-      // get all chats (root 'chats' collection) -> list userIds with latest message
-      const chatsRoot = collection(db, "chats");
-      // Note: Firestore doesn't allow easy list of subcollections; admin will fetch by listing chat documents (we will store a 'meta' doc per user in 'chats_meta')
-      const qmeta = query(collection(db, "chats_meta"), orderBy("lastUpdated", "desc"));
-      return onSnapshot(qmeta, onUpdate);
-    },
-    listenChatMessages: (userId, onUpdate) => {
-      const q = query(collection(db, "chats", userId, "messages"), orderBy("createdAt", "asc"));
-      return onSnapshot(q, onUpdate);
-    }
-  };
-</script>
-<script type="module">
-import { addOrder } from './js/firebase-ui-helpers.js';
-// But we will use global helper added in firebase snippet (window._firebase_helpers.addOrder)
-// Gather order data from existing page structure; try to find cart data in localStorage as fallback
-async function placeOrderHandler(e) {
-  e.preventDefault();
-  // Try to read form fields if any
-  const name = document.querySelector('#name')?.value || localStorage.getItem('customerName') || 'Khách';
-  const phone = document.querySelector('#phone')?.value || localStorage.getItem('customerPhone') || '';
-  const address = document.querySelector('#address')?.value || localStorage.getItem('customerAddress') || '';
-  const cartRaw = localStorage.getItem('cartItems') || localStorage.getItem('carts') || '[]';
-  let items = [];
-  try { items = JSON.parse(cartRaw); } catch(e){ items = []; }
-  const total = document.querySelector('#total')?.innerText?.replace(/[^0-9]/g,'') || localStorage.getItem('cartTotal') || 0;
-
-  const user = auth.currentUser;
-  if(!user){
-    alert('Vui lòng đăng nhập để đặt hàng');
-    window.location.href = 'login.html';
-    return;
-  }
-
-  const order = {
-    userId: user.uid,
-    customerName: name,
-    phone,
-    address,
-    items,
-    total,
-  };
-
-  try {
-    await window._firebase_helpers.addOrder(order);
-    // Optionally clear cart localStorage
-    localStorage.removeItem('cartItems');
-    localStorage.removeItem('cartTotal');
-    alert('Đặt hàng thành công!');
-    window.location.href = 'order-success.html';
-  } catch(err){
-    console.error(err);
-    alert('Lỗi khi lưu đơn hàng. Vui lòng thử lại.');
-  }
-}
-
-// attach to a button or form submit if present
-const orderForm = document.querySelector('#checkout-form') || document.querySelector('#orderForm') || document.querySelector('form');
-if(orderForm){
-  orderForm.addEventListener('submit', placeOrderHandler);
-} else {
-  const placeBtn = document.querySelector('#placeOrderBtn') || document.querySelector('.place-order');
-  if(placeBtn) placeBtn.addEventListener('click', placeOrderHandler);
-}
-</script>
+<!-- Đã loại bỏ tất cả Firebase scripts -->
 </body>
 </html>
