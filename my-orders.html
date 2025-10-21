@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Đơn hàng của tôi - TinyTags</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Thêm EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <style>
     :root {
       --max-w: 1200px; --bg-body: #121212; --bg-card: #242424; --bg-card-hover: #2c2c2c;
@@ -256,7 +258,7 @@
       color: var(--accent); 
     }
     
-    /* Order Timeline */
+    /* Order Timeline - ĐÃ ĐƠN GIẢN HÓA */
     .order-timeline {
       margin: 25px 0;
       padding: 20px;
@@ -269,6 +271,22 @@
       font-weight: 600;
       margin-bottom: 20px;
       color: var(--accent);
+    }
+    
+    .timeline-message {
+      background: rgba(254, 44, 85, 0.1);
+      border: 1px solid rgba(254, 44, 85, 0.3);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .timeline-message i {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      display: block;
     }
     
     .timeline-steps {
@@ -475,6 +493,136 @@
       transform: rotate(180deg);
     }
     
+    /* ========== CONTACT MODAL ========== */
+    .contact-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .contact-modal.active {
+      display: flex;
+    }
+    
+    .contact-content {
+      background: var(--bg-card);
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      animation: slideUp 0.3s ease;
+    }
+    
+    .contact-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--accent);
+    }
+    
+    .contact-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 25px;
+    }
+    
+    .contact-platforms {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    
+    .contact-platform {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+    
+    .contact-platform:hover {
+      background: rgba(254, 44, 85, 0.1);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    
+    .platform-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    
+    .platform-info {
+      flex: 1;
+      text-align: left;
+    }
+    
+    .platform-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .platform-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    
+    .platform-arrow {
+      color: var(--text-secondary);
+      transition: transform 0.3s ease;
+    }
+    
+    .contact-platform:hover .platform-arrow {
+      transform: translateX(5px);
+      color: var(--accent);
+    }
+    
+    .contact-close {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .contact-close:hover {
+      background: #e0264d;
+      transform: translateY(-1px);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
     /* Responsive */
     @media (max-width: 768px) {
       .header-container {
@@ -555,6 +703,11 @@
       .step-label { 
         text-align: left; 
       }
+      
+      .contact-content {
+        margin: 20px;
+        padding: 20px;
+      }
     }
   </style>
 </head>
@@ -614,6 +767,84 @@
         </div>
     </section>
   </main>
+
+  <!-- Contact Modal -->
+  <div class="contact-modal" id="contactModal">
+    <div class="contact-content">
+      <h2 class="contact-title">Liên hệ TinyTags</h2>
+      <p class="contact-subtitle">Chọn nền tảng bạn muốn liên hệ</p>
+      
+      <div class="contact-platforms">
+        <a href="https://zalo.me/0782511460" target="_blank" class="contact-platform">
+          <div class="platform-icon" style="background: #0068FF; color: white;">
+            <i class="fab fa-zalo"></i>
+          </div>
+          <div class="platform-info">
+            <div class="platform-name">Zalo</div>
+            <div class="platform-desc">Chat ngay với chúng tôi</div>
+          </div>
+          <div class="platform-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+        
+        <a href="https://www.facebook.com/profile.php?id=61581668064702" target="_blank" class="contact-platform">
+          <div class="platform-icon" style="background: #0084FF; color: white;">
+            <i class="fab fa-facebook-messenger"></i>
+          </div>
+          <div class="platform-info">
+            <div class="platform-name">Messenger</div>
+            <div class="platform-desc">Nhắn tin qua Facebook</div>
+          </div>
+          <div class="platform-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+        
+        <a href="https://www.tiktok.com/@tinytags.store" target="_blank" class="contact-platform">
+          <div class="platform-icon" style="background: #000000; color: white;">
+            <i class="fab fa-tiktok"></i>
+          </div>
+          <div class="platform-info">
+            <div class="platform-name">TikTok</div>
+            <div class="platform-desc">Theo dõi và nhắn tin</div>
+          </div>
+          <div class="platform-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+        
+        <a href="mailto:tinytags.store@gmail.com" target="_blank" class="contact-platform">
+          <div class="platform-icon" style="background: #EA4335; color: white;">
+            <i class="fas fa-envelope"></i>
+          </div>
+          <div class="platform-info">
+            <div class="platform-name">Email</div>
+            <div class="platform-desc">tinytags.store@gmail.com</div>
+          </div>
+          <div class="platform-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+        
+        <a href="tel:0782511460" class="contact-platform">
+          <div class="platform-icon" style="background: #34A853; color: white;">
+            <i class="fas fa-phone"></i>
+          </div>
+          <div class="platform-info">
+            <div class="platform-name">Điện thoại</div>
+            <div class="platform-desc">0782 511 460</div>
+          </div>
+          <div class="platform-arrow">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </a>
+      </div>
+      
+      <button class="contact-close" onclick="closeContactModal()">Đóng</button>
+    </div>
+  </div>
+
 <style>
     /* ========== FOOTER ========== */
     footer {
@@ -684,9 +915,10 @@
   </footer>
 
 <script>
+  // ========== EMAILJS CONFIG ==========
+  // Khởi tạo EmailJS - THAY BẰNG PUBLIC KEY CỦA BẠN
+  emailjs.init("YOUR_PUBLIC_KEY_HERE");
 
-  // firebase
-  
   // ========== USER SECTION MANAGEMENT ==========
   function esc(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
@@ -750,6 +982,68 @@
     } catch(e){ /* ignore */ }
   }
 
+  // ========== CONTACT MODAL FUNCTIONS ==========
+  function openContactModal() {
+    document.getElementById('contactModal').classList.add('active');
+  }
+
+  function closeContactModal() {
+    document.getElementById('contactModal').classList.remove('active');
+  }
+
+  // Đóng modal khi click bên ngoài
+  document.getElementById('contactModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeContactModal();
+    }
+  });
+
+// ========== EMAIL FUNCTIONS ==========
+async function sendCancellationEmail(orderData) {
+  try {
+    // Tạo nội dung email hủy đơn
+    const cancellationDetails = `
+❌ ĐƠN HÀNG BỊ HỦY - TINYTAGS STORE
+
+📋 THÔNG TIN ĐƠN HÀNG
+Mã đơn: ${orderData.orderId}
+Khách hàng: ${orderData.customerInfo.name}
+SĐT: ${orderData.customerInfo.phone}
+Email: ${orderData.customerInfo.email || 'Không có'}
+Địa chỉ: ${orderData.customerInfo.address}
+
+💰 THÔNG TIN THANH TOÁN
+Phương thức: ${getPaymentText(orderData.payment?.method || 'cod')}
+Tổng tiền: ${(orderData.orderSummary?.total || 0).toLocaleString('vi-VN')}₫
+
+🛒 SẢN PHẨM ĐÃ HỦY
+${orderData.items.map(item => 
+  `• ${item.name} (${item.size}) - ${item.quantity} x ${item.price.toLocaleString('vi-VN')}₫ = ${(item.quantity * item.price).toLocaleString('vi-VN')}₫`
+).join('\n')}
+
+⏰ THỜI GIAN
+Ngày đặt: ${formatOrderDate(orderData.createdAt)}
+Ngày hủy: ${new Date().toLocaleString('vi-VN')}
+
+--- 
+TinyTags Store - Cảm ơn bạn!
+    `.trim();
+
+    // Gửi email bằng template "Contact Us"
+    await emailjs.send("service_tinytags", "template_vlprarg", {
+      from_name: "TinyTags Hệ Thống",
+      message: cancellationDetails,
+      reply_to: orderData.customerInfo.email || "tinytags.store@gmail.com",
+      subject: `❌ ĐƠN HÀNG BỊ HỦY: ${orderData.orderId} - ${orderData.customerInfo.name}`
+    });
+    
+    console.log('✅ Đã gửi email hủy đơn thành công');
+    return true;
+  } catch (error) {
+    console.error('❌ Lỗi gửi email hủy đơn:', error);
+    return false;
+  }
+}
   // ========== ORDER MANAGEMENT ==========
   function formatOrderDate(dateString) {
     if (!dateString) return 'Đang cập nhật';
@@ -794,36 +1088,41 @@
     return paymentMap[payment] || payment;
   }
 
+  // ĐÃ SỬA: Timeline đơn giản hóa, chỉ hiển thị thông báo
   function getTimelineSteps(order) {
+    // Tất cả đơn hàng đều ở trạng thái "Shop đã nhận đơn"
     const steps = [
-      { id: 'ordered', label: 'Đặt hàng thành công', icon: 'fas fa-shopping-cart', date: order.createdAt },
-      { id: 'confirmed', label: 'Đã xác nhận', icon: 'fas fa-check-circle', date: order.confirmedAt },
-      { id: 'shipping', label: 'Đang giao hàng', icon: 'fas fa-shipping-fast', date: order.shippedAt },
-      { id: 'delivered', label: 'Giao hàng thành công', icon: 'fas fa-box-open', date: order.deliveredAt }
+      { 
+        id: 'ordered', 
+        label: 'Đặt hàng thành công', 
+        icon: 'fas fa-shopping-cart', 
+        date: order.createdAt,
+        status: 'completed'
+      },
+      { 
+        id: 'received', 
+        label: 'Shop đã nhận đơn', 
+        icon: 'fas fa-store', 
+        date: order.createdAt,
+        status: 'active'
+      },
+      { 
+        id: 'contact', 
+        label: 'Shop sẽ liên hệ', 
+        icon: 'fas fa-phone', 
+        date: null,
+        status: 'pending'
+      },
+      { 
+        id: 'completed', 
+        label: 'Hoàn tất đơn hàng', 
+        icon: 'fas fa-check-circle', 
+        date: null,
+        status: 'pending'
+      }
     ];
     
-    if (order.status === 'cancelled') {
-      return steps.map(step => ({
-        ...step,
-        status: 'cancelled'
-      }));
-    }
-    
-    const statusOrder = ['pending', 'confirmed', 'shipping', 'delivered'];
-    const currentStatusIndex = statusOrder.indexOf(order.status);
-    
-    return steps.map((step, index) => {
-      let status = 'pending';
-      if (index <= currentStatusIndex) {
-        status = index === currentStatusIndex ? 'active' : 'completed';
-      }
-      
-      return {
-        ...step,
-        status: status,
-        date: step.date
-      };
-    });
+    return steps;
   }
 
   function toggleOrderDetails(orderId) {
@@ -961,7 +1260,7 @@
         });
       }
       
-      // Timeline HTML
+      // Timeline HTML - ĐÃ SỬA: Thêm thông báo thân thiện
       let timelineHtml = '';
       timelineSteps.forEach(step => {
         timelineHtml += `
@@ -988,24 +1287,18 @@
       // Tổng tiền
       const totalAmount = order.orderSummary?.total || order.total || 0;
       
-      let actionsHtml = '';
+      // ĐÃ SỬA: Chỉ còn 2 nút - Liên hệ Shop và Hủy đơn
+      let actionsHtml = `
+        <button class="btn btn-primary" onclick="openContactModal()">
+          <i class="fas fa-headset"></i> Liên hệ Shop
+        </button>
+      `;
+      
       if (order.status === 'pending') {
-        actionsHtml = `
-          <button class="btn btn-danger" onclick="cancelOrder('${order.orderId}')">Hủy đơn hàng</button>
-          <button class="btn btn-secondary" onclick="contactSupport('${order.orderId}')">Liên hệ hỗ trợ</button>
-        `;
-      } else if (order.status === 'shipping') {
-        actionsHtml = `
-          <button class="btn btn-primary" onclick="trackOrder('${order.orderId}')">Theo dõi đơn hàng</button>
-        `;
-      } else if (order.status === 'delivered') {
-        actionsHtml = `
-          <button class="btn btn-primary" onclick="buyAgain('${order.orderId}')">Mua lại</button>
-          <button class="btn btn-secondary" onclick="rateOrder('${order.orderId}')">Đánh giá</button>
-        `;
-      } else {
-        actionsHtml = `
-          <button class="btn btn-secondary" onclick="contactSupport('${order.orderId}')">Liên hệ CSKH</button>
+        actionsHtml += `
+          <button class="btn btn-danger" onclick="cancelOrder('${order.orderId}')">
+            <i class="fas fa-times"></i> Hủy đơn
+          </button>
         `;
       }
       
@@ -1033,6 +1326,14 @@
           </div>
           
           <div class="order-content" id="order-content-${order.orderId}">
+            <!-- Thông báo thân thiện - MỚI THÊM -->
+            <div class="timeline-message">
+              <i class="fas fa-store"></i>
+              <h4>Shop đã nhận được đơn hàng của bạn!</h4>
+              <p>Chúng tôi sẽ liên hệ với bạn trong thời gian sớm nhất để xác nhận đơn hàng và thông báo thời gian giao hàng.</p>
+              <p><strong>Hotline: 0782511460</strong></p>
+            </div>
+            
             <div class="order-items">
               ${itemsHtml}
             </div>
@@ -1127,114 +1428,41 @@
     }
   }
 
-  function cancelOrder(orderId) {
+  // ĐÃ SỬA: Hàm hủy đơn hàng với gửi email
+  async function cancelOrder(orderId) {
     if (confirm(`Bạn có chắc muốn hủy đơn hàng ${orderId}?`)) {
       // Hủy trong adminOrders
       const adminOrders = JSON.parse(localStorage.getItem("adminOrders")) || [];
       const orderIndex = adminOrders.findIndex(order => order.orderId === orderId);
       
       if (orderIndex !== -1) {
-        adminOrders[orderIndex].status = 'cancelled';
-        adminOrders[orderIndex].cancelledAt = new Date().toISOString();
+        const cancelledOrder = adminOrders[orderIndex];
+        cancelledOrder.status = 'cancelled';
+        cancelledOrder.cancelledAt = new Date().toISOString();
         localStorage.setItem("adminOrders", JSON.stringify(adminOrders));
         
-        // Tạo thông báo
-        createNotification(orderId, 'cancelled');
+        // Gửi email thông báo hủy đơn
+        try {
+          await sendCancellationEmail(cancelledOrder);
+          showToast('Đã hủy đơn hàng và gửi thông báo qua email!');
+        } catch (error) {
+          showToast('Đã hủy đơn hàng! (Lỗi gửi email)', 'error');
+        }
         
         loadMyOrders();
-        alert('Đã hủy đơn hàng thành công!');
       }
     }
-  }
-
-  function createNotification(orderId, type) {
-    const notifications = JSON.parse(localStorage.getItem("userNotifications")) || [];
-    const user = JSON.parse(localStorage.getItem("user"));
-    const username = user.fullname || user.username;
-    
-    let title = '';
-    let message = '';
-    
-    switch(type) {
-      case 'cancelled':
-        title = 'Đơn hàng đã bị hủy';
-        message = `Đơn hàng ${orderId} đã bị hủy theo yêu cầu của bạn.`;
-        break;
-      case 'status_updated':
-        title = 'Cập nhật trạng thái đơn hàng';
-        message = `Đơn hàng ${orderId} đã được cập nhật trạng thái.`;
-        break;
-    }
-    
-    const notification = {
-      id: 'TB' + Date.now(),
-      type: 'order_update',
-      title: title,
-      message: message,
-      time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-      date: new Date(),
-      orderId: orderId,
-      read: false,
-      icon: 'fas fa-shopping-cart'
-    };
-    
-    notifications.unshift(notification);
-    localStorage.setItem("userNotifications", JSON.stringify(notifications));
-  }
-
-  function contactSupport(orderId) {
-    alert(`Liên hệ hỗ trợ cho đơn hàng ${orderId}\n\nEmail: tinytags.store@gmail.com\nZalo: 0782511460`);
-  }
-
-  function trackOrder(orderId) {
-    alert(`Theo dõi đơn hàng ${orderId}\n\nĐơn hàng đang được vận chuyển. Bạn sẽ nhận được thông báo khi hàng sắp đến.\n\nMã vận đơn: VN${orderId}`);
-  }
-
-  function buyAgain(orderId) {
-    const adminOrders = JSON.parse(localStorage.getItem("adminOrders")) || [];
-    const order = adminOrders.find(o => o.orderId === orderId);
-    const user = JSON.parse(localStorage.getItem("user"));
-    const username = user.fullname || user.username;
-    
-    if (order && order.items) {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      
-      order.items.forEach(item => {
-        const existingItem = cart.find(cartItem => 
-          cartItem.id === item.id && 
-          cartItem.size === item.size && 
-          cartItem.username === username
-        );
-        
-        if (existingItem) {
-          existingItem.quantity += item.quantity || 1;
-        } else {
-          cart.push({
-            ...item,
-            username: username
-          });
-        }
-      });
-      
-      localStorage.setItem("cart", JSON.stringify(cart));
-      alert('Đã thêm sản phẩm vào giỏ hàng!');
-      window.location.href = 'cart.html';
-    }
-  }
-
-  function rateOrder(orderId) {
-    alert(`Đánh giá đơn hàng ${orderId}\n\nChuyển hướng đến trang đánh giá...`);
   }
 
   // KHỞI TẠO TRANG
   document.addEventListener("DOMContentLoaded", () => {
     console.log('🚀 Trang đơn hàng đã tải xong');
     
-    // Cập nhật header - GIỐNG TRANG THANH TOÁN
+    // Cập nhật header
     updateUserSection();
     updateCartCount();
     
-    // Tải đơn hàng - CHỈ MỘT LẦN
+    // Tải đơn hàng
     loadMyOrders();
   });
 
@@ -1252,8 +1480,6 @@
       updateCartCount();
     }
   });
-
-  // ĐÃ XÓA setInterval để tránh auto reload
 </script>
 </body>
 </html>
