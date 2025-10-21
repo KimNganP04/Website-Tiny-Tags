@@ -612,6 +612,148 @@
       transform: translateY(-1px);
     }
     
+    /* ========== CANCEL ORDER MODAL ========== */
+    .cancel-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .cancel-modal.active {
+      display: flex;
+    }
+    
+    .cancel-content {
+      background: var(--bg-card);
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      animation: slideUp 0.3s ease;
+    }
+    
+    .cancel-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--accent);
+      text-align: center;
+    }
+    
+    .cancel-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    
+    .cancel-reasons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    
+    .cancel-reason {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .cancel-reason:hover {
+      background: rgba(254, 44, 85, 0.1);
+      border-color: var(--accent);
+    }
+    
+    .cancel-reason.selected {
+      background: rgba(254, 44, 85, 0.15);
+      border-color: var(--accent);
+    }
+    
+    .reason-radio {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+    
+    .cancel-reason.selected .reason-radio {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+    
+    .reason-radio::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: white;
+      display: none;
+    }
+    
+    .cancel-reason.selected .reason-radio::after {
+      display: block;
+    }
+    
+    .reason-text {
+      flex: 1;
+      font-weight: 500;
+    }
+    
+    .other-reason-input {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .other-reason-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .cancel-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    
+    .btn-cancel {
+      background: #dc2626;
+      color: white;
+    }
+    
+    .btn-cancel:hover {
+      background: #b91c1c;
+    }
+    
+    .btn-cancel:disabled {
+      background: #6b7280;
+      cursor: not-allowed;
+    }
+    
     /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -704,9 +846,14 @@
         text-align: left; 
       }
       
-      .contact-content {
+      .contact-content,
+      .cancel-content {
         margin: 20px;
         padding: 20px;
+      }
+      
+      .cancel-actions {
+        flex-direction: column;
       }
     }
   </style>
@@ -845,6 +992,53 @@
     </div>
   </div>
 
+  <!-- Cancel Order Modal -->
+  <div class="cancel-modal" id="cancelModal">
+    <div class="cancel-content">
+      <h2 class="cancel-title">Hủy đơn hàng</h2>
+      <p class="cancel-subtitle">Vui lòng chọn lý do hủy đơn hàng của bạn</p>
+      
+      <div class="cancel-reasons" id="cancelReasons">
+        <div class="cancel-reason" data-reason="Thay đổi địa chỉ giao hàng">
+          <div class="reason-radio"></div>
+          <div class="reason-text">Thay đổi địa chỉ giao hàng</div>
+        </div>
+        
+        <div class="cancel-reason" data-reason="Thay đổi kích thước/số lượng sản phẩm">
+          <div class="reason-radio"></div>
+          <div class="reason-text">Thay đổi kích thước/số lượng sản phẩm</div>
+        </div>
+        
+        <div class="cancel-reason" data-reason="Tìm thấy sản phẩm với giá tốt hơn">
+          <div class="reason-radio"></div>
+          <div class="reason-text">Tìm thấy sản phẩm với giá tốt hơn</div>
+        </div>
+        
+        <div class="cancel-reason" data-reason="Không còn nhu cầu mua hàng">
+          <div class="reason-radio"></div>
+          <div class="reason-text">Không còn nhu cầu mua hàng</div>
+        </div>
+        
+        <div class="cancel-reason" data-reason="Lý do khác">
+          <div class="reason-radio"></div>
+          <div class="reason-text">Lý do khác</div>
+        </div>
+      </div>
+      
+      <textarea 
+        class="other-reason-input" 
+        id="otherReasonInput" 
+        placeholder="Vui lòng nhập lý do hủy đơn hàng của bạn..."
+        rows="3"
+      ></textarea>
+      
+      <div class="cancel-actions">
+        <button class="btn btn-secondary" onclick="closeCancelModal()">Quay lại</button>
+        <button class="btn btn-cancel" id="confirmCancelBtn" disabled onclick="confirmCancelOrder()">Xác nhận hủy</button>
+      </div>
+    </div>
+  </div>
+
 <style>
     /* ========== FOOTER ========== */
     footer {
@@ -919,6 +1113,10 @@
   // Khởi tạo EmailJS - THAY BẰNG PUBLIC KEY CỦA BẠN
   emailjs.init("YOUR_PUBLIC_KEY_HERE");
 
+  // ========== GLOBAL VARIABLES ==========
+  let currentOrderId = null;
+  let selectedCancelReason = '';
+
   // ========== USER SECTION MANAGEMENT ==========
   function esc(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
@@ -982,13 +1180,34 @@
     } catch(e){ /* ignore */ }
   }
 
-  // ========== CONTACT MODAL FUNCTIONS ==========
+  // ========== MODAL FUNCTIONS ==========
   function openContactModal() {
     document.getElementById('contactModal').classList.add('active');
   }
 
   function closeContactModal() {
     document.getElementById('contactModal').classList.remove('active');
+  }
+
+  function openCancelModal(orderId) {
+    currentOrderId = orderId;
+    selectedCancelReason = '';
+    document.getElementById('otherReasonInput').style.display = 'none';
+    document.getElementById('otherReasonInput').value = '';
+    document.getElementById('confirmCancelBtn').disabled = true;
+    
+    // Reset selection
+    document.querySelectorAll('.cancel-reason').forEach(reason => {
+      reason.classList.remove('selected');
+    });
+    
+    document.getElementById('cancelModal').classList.add('active');
+  }
+
+  function closeCancelModal() {
+    document.getElementById('cancelModal').classList.remove('active');
+    currentOrderId = null;
+    selectedCancelReason = '';
   }
 
   // Đóng modal khi click bên ngoài
@@ -998,52 +1217,149 @@
     }
   });
 
-// ========== EMAIL FUNCTIONS ==========
-async function sendCancellationEmail(orderData) {
-  try {
-    // Tạo nội dung email hủy đơn
-    const cancellationDetails = `
-❌ ĐƠN HÀNG BỊ HỦY - TINYTAGS STORE
+  document.getElementById('cancelModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeCancelModal();
+    }
+  });
 
-📋 THÔNG TIN ĐƠN HÀNG
-Mã đơn: ${orderData.orderId}
-Khách hàng: ${orderData.customerInfo.name}
-SĐT: ${orderData.customerInfo.phone}
-Email: ${orderData.customerInfo.email || 'Không có'}
-Địa chỉ: ${orderData.customerInfo.address}
-
-💰 THÔNG TIN THANH TOÁN
-Phương thức: ${getPaymentText(orderData.payment?.method || 'cod')}
-Tổng tiền: ${(orderData.orderSummary?.total || 0).toLocaleString('vi-VN')}₫
-
-🛒 SẢN PHẨM ĐÃ HỦY
-${orderData.items.map(item => 
-  `• ${item.name} (${item.size}) - ${item.quantity} x ${item.price.toLocaleString('vi-VN')}₫ = ${(item.quantity * item.price).toLocaleString('vi-VN')}₫`
-).join('\n')}
-
-⏰ THỜI GIAN
-Ngày đặt: ${formatOrderDate(orderData.createdAt)}
-Ngày hủy: ${new Date().toLocaleString('vi-VN')}
-
---- 
-TinyTags Store - Cảm ơn bạn!
-    `.trim();
-
-    // Gửi email bằng template "Contact Us"
-    await emailjs.send("service_tinytags", "template_vlprarg", {
-      from_name: "TinyTags Hệ Thống",
-      message: cancellationDetails,
-      reply_to: orderData.customerInfo.email || "tinytags.store@gmail.com",
-      subject: `❌ ĐƠN HÀNG BỊ HỦY: ${orderData.orderId} - ${orderData.customerInfo.name}`
+  // ========== CANCEL REASON SELECTION ==========
+  document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý chọn lý do hủy đơn
+    document.querySelectorAll('.cancel-reason').forEach(reason => {
+      reason.addEventListener('click', function() {
+        // Bỏ chọn tất cả
+        document.querySelectorAll('.cancel-reason').forEach(r => {
+          r.classList.remove('selected');
+        });
+        
+        // Chọn lý do hiện tại
+        this.classList.add('selected');
+        selectedCancelReason = this.getAttribute('data-reason');
+        
+        // Hiển thị ô nhập nếu chọn "Lý do khác"
+        const otherInput = document.getElementById('otherReasonInput');
+        if (selectedCancelReason === 'Lý do khác') {
+          otherInput.style.display = 'block';
+          otherInput.focus();
+        } else {
+          otherInput.style.display = 'none';
+          otherInput.value = '';
+        }
+        
+        // Kích hoạt nút xác nhận
+        document.getElementById('confirmCancelBtn').disabled = false;
+      });
     });
     
-    console.log('✅ Đã gửi email hủy đơn thành công');
-    return true;
+    // Xử lý nhập lý do khác
+    document.getElementById('otherReasonInput').addEventListener('input', function() {
+      if (this.value.trim()) {
+        selectedCancelReason = this.value.trim();
+      }
+    });
+  });
+
+// =============================================
+// HÀM GỬI EMAIL HỦY ĐƠN HÀNG BẰNG EMAILJS - DÙNG TEMPLATE CONTACT US
+// =============================================
+function sendCancellationEmail(orderData, cancelReason) {
+  return new Promise((resolve, reject) => {
+      // KHỞI TẠO EMAILJS - THAY BẰNG THÔNG TIN CỦA BẠN
+      emailjs.init("ZXcbzZHr1RNokgDw2"); // 👈 Thay bằng Public Key của bạn
+      
+      // Tạo nội dung email hủy đơn hàng với format giống đơn hàng mới
+      const cancellationDetails = `
+❌ TINYTAGS - ĐƠN HÀNG ĐÃ HỦY
+
+📋 THÔNG TIN KHÁCH HÀNG
+👤 Họ tên: ${orderData.customerInfo.name}
+📞 SĐT: ${orderData.customerInfo.phone}
+📧 Email: ${orderData.customerInfo.email || 'Không có'}
+📍 Địa chỉ: ${orderData.customerInfo.address}
+
+📝 LÝ DO HỦY ĐƠN
+${cancelReason || 'Khách hàng hủy đơn hàng'}
+
+💳 THÔNG TIN THANH TOÁN
+Phương thức: ${getPaymentMethodName(orderData.payment?.method || 'cod')}
+Mã giao dịch: ${orderData.payment?.transactionId || 'Không có'}
+Trạng thái: ĐÃ HỦY
+
+🛒 CHI TIẾT ĐƠN HÀNG ĐÃ HỦY
+${orderData.items.map(item => 
+    `• ${item.name} (${item.size}) - ${item.quantity} x ${item.price.toLocaleString('vi-VN')}₫ = ${(item.quantity * item.price).toLocaleString('vi-VN')}₫`
+).join('\n')}
+
+💰 TỔNG HÓA ĐƠN
+Tiền sản phẩm: ${(orderData.orderSummary?.subtotal || orderData.total || 0).toLocaleString('vi-VN')}₫
+${orderData.orderSummary?.shippingFee ? `Phí vận chuyển: ${orderData.orderSummary.shippingFee.toLocaleString('vi-VN')}₫` : ''}
+${orderData.orderSummary?.discount > 0 ? `Giảm giá voucher: -${orderData.orderSummary.discount.toLocaleString('vi-VN')}₫` : ''}
+${orderData.orderSummary?.shippingDiscount > 0 ? `Giảm giá vận chuyển: -${orderData.orderSummary.shippingDiscount.toLocaleString('vi-VN')}₫` : ''}
+💎 TỔNG CỘNG: ${(orderData.orderSummary?.total || orderData.total || 0).toLocaleString('vi-VN')}₫
+
+${orderData.vouchers?.length > 0 ? `🎫 VOUCHER: ${orderData.vouchers.map(v => v.code).join(', ')}` : ''}
+${orderData.notes ? `📝 GHI CHÚ ĐƠN HÀNG: ${orderData.notes}` : ''}
+
+⏰ THỜI GIAN ĐẶT HÀNG: ${formatOrderDate(orderData.createdAt)}
+⏰ THỜI GIAN HỦY ĐƠN: ${new Date().toLocaleString('vi-VN')}
+
+🔴 ĐƠN HÀNG ĐÃ ĐƯỢC HỦY THÀNH CÔNG
+      `.trim();
+
+      // Gửi email - DÙNG TEMPLATE "CONTACT US"
+      emailjs.send("service_tinytags", "template_vlprarg", {
+          // Template "Contact Us" cần các biến này:
+          from_name: "TinyTags Hệ Thống",
+          message: cancellationDetails,
+          reply_to: orderData.customerInfo.email || "tinytags.store@gmail.com",
+          // Thêm subject tùy chỉnh cho hủy đơn hàng
+          subject: `❌ HỦY ĐƠN HÀNG: ${orderData.orderId} - ${orderData.customerInfo.name}`
+      })
+      .then(function(response) {
+          console.log('✅ Email hủy đơn hàng gửi thành công:', response);
+          resolve(true);
+      }, function(error) {
+          console.error('❌ Lỗi gửi email hủy đơn hàng:', error);
+          reject(error);
+      });
+  });
+}
+
+// Hàm chuyển đổi tên phương thức thanh toán (giữ nguyên)
+function getPaymentMethodName(method) {
+  const methods = {
+      'cod': 'Thanh toán khi nhận hàng',
+      'momo': 'Ví MoMo', 
+      'transfer': 'Chuyển khoản ngân hàng',
+      'vnpay': 'Ví VNPay',
+      'bank': 'Thẻ ngân hàng'
+  };
+  return methods[method] || method;
+}
+
+// Hàm format ngày tháng (thêm vào nếu chưa có)
+function formatOrderDate(dateString) {
+  if (!dateString) return 'Đang cập nhật';
+  
+  try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+          return dateString;
+      }
+      
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      
+      return `${hours}:${minutes} ${day}/${month}/${year}`;
   } catch (error) {
-    console.error('❌ Lỗi gửi email hủy đơn:', error);
-    return false;
+      return dateString;
   }
 }
+
   // ========== ORDER MANAGEMENT ==========
   function formatOrderDate(dateString) {
     if (!dateString) return 'Đang cập nhật';
@@ -1088,9 +1404,8 @@ TinyTags Store - Cảm ơn bạn!
     return paymentMap[payment] || payment;
   }
 
-  // ĐÃ SỬA: Timeline đơn giản hóa, chỉ hiển thị thông báo
+  // Timeline đơn giản hóa, chỉ hiển thị thông báo
   function getTimelineSteps(order) {
-    // Tất cả đơn hàng đều ở trạng thái "Shop đã nhận đơn"
     const steps = [
       { 
         id: 'ordered', 
@@ -1296,7 +1611,7 @@ TinyTags Store - Cảm ơn bạn!
       
       if (order.status === 'pending') {
         actionsHtml += `
-          <button class="btn btn-danger" onclick="cancelOrder('${order.orderId}')">
+          <button class="btn btn-danger" onclick="openCancelModal('${order.orderId}')">
             <i class="fas fa-times"></i> Hủy đơn
           </button>
         `;
@@ -1428,29 +1743,36 @@ TinyTags Store - Cảm ơn bạn!
     }
   }
 
-  // ĐÃ SỬA: Hàm hủy đơn hàng với gửi email
-  async function cancelOrder(orderId) {
-    if (confirm(`Bạn có chắc muốn hủy đơn hàng ${orderId}?`)) {
-      // Hủy trong adminOrders
-      const adminOrders = JSON.parse(localStorage.getItem("adminOrders")) || [];
-      const orderIndex = adminOrders.findIndex(order => order.orderId === orderId);
+  // ĐÃ SỬA: Hàm xác nhận hủy đơn hàng với gửi email
+  async function confirmCancelOrder() {
+    if (!currentOrderId || !selectedCancelReason) {
+      showToast('Vui lòng chọn lý do hủy đơn hàng!', 'error');
+      return;
+    }
+
+    // Hủy trong adminOrders
+    const adminOrders = JSON.parse(localStorage.getItem("adminOrders")) || [];
+    const orderIndex = adminOrders.findIndex(order => order.orderId === currentOrderId);
+    
+    if (orderIndex !== -1) {
+      const cancelledOrder = adminOrders[orderIndex];
+      cancelledOrder.status = 'cancelled';
+      cancelledOrder.cancelledAt = new Date().toISOString();
+      cancelledOrder.cancelReason = selectedCancelReason;
+      localStorage.setItem("adminOrders", JSON.stringify(adminOrders));
       
-      if (orderIndex !== -1) {
-        const cancelledOrder = adminOrders[orderIndex];
-        cancelledOrder.status = 'cancelled';
-        cancelledOrder.cancelledAt = new Date().toISOString();
-        localStorage.setItem("adminOrders", JSON.stringify(adminOrders));
-        
-        // Gửi email thông báo hủy đơn
-        try {
-          await sendCancellationEmail(cancelledOrder);
-          showToast('Đã hủy đơn hàng và gửi thông báo qua email!');
-        } catch (error) {
-          showToast('Đã hủy đơn hàng! (Lỗi gửi email)', 'error');
-        }
-        
-        loadMyOrders();
+      // Gửi email thông báo hủy đơn
+      try {
+        await sendCancellationEmail(cancelledOrder, selectedCancelReason);
+        showToast('Đã hủy đơn hàng và gửi thông báo qua email!');
+      } catch (error) {
+        showToast('Đã hủy đơn hàng! (Lỗi gửi email)', 'error');
       }
+      
+      closeCancelModal();
+      loadMyOrders();
+    } else {
+      showToast('Không tìm thấy đơn hàng!', 'error');
     }
   }
 
