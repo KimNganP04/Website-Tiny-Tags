@@ -1397,70 +1397,69 @@
             }
         }
 
-        // Tìm kiếm header
-        function initHeaderSearch() {
-            const headerSearch = document.getElementById('header-search');
-            const searchResults = document.getElementById('search-results');
+    // Tìm kiếm header
+    function initHeaderSearch() {
+      const headerSearch = document.getElementById('header-search');
+      const searchResults = document.getElementById('search-results');
 
-            // Dữ liệu sản phẩm mẫu cho tìm kiếm
-            const allProducts = accessoryProducts.map(product => ({
-                name: product.name,
-                price: product.price,
-                category: "phukien",
-                url: `chitietsp.html?id=${product.id}`
-            }));
+      // Dữ liệu sản phẩm mẫu cho tìm kiếm
+      const allProducts = accessoryProducts.map(product => ({
+        name: product.name,
+        price: product.price,
+        category: "phukien",
+        url: `chitietsp.html?id=${product.id}`
+      }));
 
-            headerSearch.addEventListener('input', function() {
-                const searchTerm = this.value.trim().toLowerCase();
-                searchResults.innerHTML = '';
-                
-                if (searchTerm.length < 2) {
-                    searchResults.style.display = 'none';
-                    return;
-                }
-
-                const filtered = allProducts.filter(product => 
-                    product.name.toLowerCase().includes(searchTerm)
-                );
-
-                if (filtered.length === 0) {
-                    searchResults.innerHTML = '<div class="search-result-item">Không tìm thấy sản phẩm</div>';
-                } else {
-                    filtered.forEach(product => {
-                        const item = document.createElement('div');
-                        item.className = 'search-result-item';
-                        item.innerHTML = `
-                            <div style="font-weight: 600;">${product.name}</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">${product.price.toLocaleString('vi-VN')}₫ • ${product.category}</div>
-                        `;
-                        item.addEventListener('click', function() {
-                            window.location.href = product.url;
-                        });
-                        searchResults.appendChild(item);
-                    });
-                }
-                
-                searchResults.style.display = 'block';
-            });
-
-            // Ẩn kết quả tìm kiếm khi click ra ngoài
-            document.addEventListener('click', function(e) {
-                if (!headerSearch.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.style.display = 'none';
-                }
-            });
-
-            // Enter để tìm kiếm
-            headerSearch.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    const searchTerm = this.value.trim();
-                    if (searchTerm) {
-                        window.location.href = `store.html?search=${encodeURIComponent(searchTerm)}`;
-                    }
-                }
-            });
+      headerSearch.addEventListener('input', function() {
+        const searchTerm = this.value.trim().toLowerCase();
+        searchResults.innerHTML = '';
+        
+        if (searchTerm.length < 2) {
+          searchResults.style.display = 'none';
+          return;
         }
 
+        const filtered = allProducts.filter(product => 
+          product.name.toLowerCase().includes(searchTerm)
+        );
+
+        if (filtered.length === 0) {
+          searchResults.innerHTML = '<div class="search-result-item">Không tìm thấy sản phẩm</div>';
+        } else {
+          filtered.forEach(product => {
+            const item = document.createElement('div');
+            item.className = 'search-result-item';
+            item.innerHTML = `
+              <div style="font-weight: 600;">${product.name}</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary);">${product.price.toLocaleString('vi-VN')}₫ • ${product.category}</div>
+            `;
+            item.addEventListener('click', function() {
+              window.location.href = product.url;
+            });
+            searchResults.appendChild(item);
+          });
+        }
+        
+        searchResults.style.display = 'block';
+      });
+
+      // Ẩn kết quả tìm kiếm khi click ra ngoài
+      document.addEventListener('click', function(e) {
+        if (!headerSearch.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.style.display = 'none';
+        }
+      });
+
+      // Enter để tìm kiếm
+      headerSearch.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          const searchTerm = this.value.trim();
+          if (searchTerm) {
+            window.location.href = `store.html?search=${encodeURIComponent(searchTerm)}`;
+          }
+        }
+      });
+    }
         document.addEventListener("DOMContentLoaded", () => {
             updateUserSection();
             updateCartCount();
@@ -1627,4 +1626,5 @@
 </body>
 
 </html>
+
 
