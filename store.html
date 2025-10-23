@@ -882,20 +882,18 @@
     document.getElementById('min-price').placeholder = "VD: 25000";
     document.getElementById('max-price').placeholder = "VD: 60000";
 
-    // Tìm kiếm header
+       // Tìm kiếm header
     function initHeaderSearch() {
       const headerSearch = document.getElementById('header-search');
       const searchResults = document.getElementById('search-results');
 
       // Dữ liệu sản phẩm mẫu cho tìm kiếm
-      const allProducts = [
-        { name: "Móc Khóa Ruby Sweet Pink", price: 49000, category: "phukien", url: "phukien.html" },
-        { name: "Móc Khóa Em Xinh Rainbow", price: 55000, category: "phukien", url: "phukien.html" },
-        { name: "Móc Khóa Hehe Simple", price: 35000, category: "phukien", url: "phukien.html" },
-        { name: "Móc Khóa Mini Clover", price: 42000, category: "phukien", url: "phukien.html" },
-        { name: "Móc Khóa Minty Star", price: 38000, category: "phukien", url: "phukien.html" },
-        { name: "Móc Khóa Flower Duo", price: 65000, category: "phukien", url: "phukien.html" },
-      ];
+      const allProducts = accessoryProducts.map(product => ({
+        name: product.name,
+        price: product.price,
+        category: "phukien",
+        url: `chitietsp.html?id=${product.id}`
+      }));
 
       headerSearch.addEventListener('input', function() {
         const searchTerm = this.value.trim().toLowerCase();
@@ -947,7 +945,6 @@
         }
       });
     }
-
     document.addEventListener("DOMContentLoaded", () => {
       updateUserSection();
       loadProducts();
@@ -993,3 +990,4 @@
 </body>
 
 </html>
+
